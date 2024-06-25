@@ -5,7 +5,7 @@ def login_view(request):
     if request.method == "GET":
         template_name = "accounts/login.html"
     if request.method == "POST":
-        template_name = "accounts/livefeed.html"
+        template_name = "accounts/livefeed.htlm"
     return render(request, template_name)
 def logout_view(request):
     template_name = "accounts/logout.html"
