@@ -21,5 +21,6 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path("",include("accounts.urls")),
     path("livefeed/", include ("livefeed.urls")),
+    path("livestream/", include ("livestream.urls")),
 
 ]

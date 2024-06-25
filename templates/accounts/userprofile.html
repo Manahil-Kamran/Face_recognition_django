@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Admin Profile</title>
+	<link rel="stylesheet" href="styles.css"> <!-- link to your stylesheet -->
+</head>
+<body>
+	<!-- Header section -->
+	<header>
+		<nav>
+			<ul>
+				<li><a href="#">Dashboard</a></li>
+				<li><a href="#">Settings</a></li>
+				<li><a href="#">Logout</a></li>
+			</ul>
+		</nav>
+	</header>
+
+	<!-- Main content section -->
+	<main>
+		<h1>Admin Profile</h1>
+		<section class="profile-container">
+			<div class="profile-picture">
+				<img src="admin-profile-picture.jpg" alt="Admin Profile Picture">
+			</div>
+			<div class="profile-info">
+				<h2>{{ admin_name }}</h2>
+				<p><strong>Email:</strong> {{ admin_email }}</p>
+				<p><strong>Role:</strong> {{ admin_role }}</p>
+				<p><strong>Joined:</strong> {{ admin_joined }}</p>
+			</div>
+		</section>
+
+		<!-- Edit profile button -->
+		<button class="edit-profile-btn">Edit Profile</button>
+
+		<!-- Profile edit form (hidden by default) -->
+		<div class="profile-edit-form" style="display: none;">
+			<form>
+				<label for="name">Name:</label>
+				<input type="text" id="name" value="{{ admin_name }}">
+
+				<label for="email">Email:</label>
+				<input type="email" id="email" value="{{ admin_email }}">
+
+				<label for="password">Password:</label>
+				<input type="password" id="password">
+
+				<label for="confirm-password">Confirm Password:</label>
+				<input type="password" id="confirm-password">
+
+				<button type="submit">Save Changes</button>
+			</form>
+		</div>
+	</main>
+
+	<!-- Footer section -->
+	<footer>
+		<p>&copy;  Admin Panel</p>
+	</footer>
+
+	<!-- JavaScript code to toggle edit profile form -->
+	<script>
+		const editProfileBtn = document.querySelector('.edit-profile-btn');
+		const profileEditForm = document.querySelector('.profile-edit-form');
+
+		editProfileBtn.addEventListener('click', () => {
+			profileEditForm.style.display = 'block';
+		});
+	</script>
+</body>
+</html>
