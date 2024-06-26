@@ -23,5 +23,6 @@ urlpatterns = [
     path("livefeed/", include ("livefeed.urls")),
     path("livestream/", include ("livestream.urls")),
     path("registration/", include ("Registration.urls")),
+    path("reports/", include ("Reports.urls")),
 
 ]
