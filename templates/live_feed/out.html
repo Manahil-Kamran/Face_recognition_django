@@ -28,7 +28,7 @@
     <!-- partial:partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-          <a class="navbar-brand brand-logo" href="index.html"><img src="{% static 'images/logo.svg' %}" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="index.html"><img src="{% static 'images/logo2.svg' %}" alt="logo" /></a>
           <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{% static 'images/logo-mini.svg' %}" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -49,7 +49,7 @@
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="nav-profile-img">
-                  <img src="{% static 'images/faces/face1.jpg'% }" alt="image">
+                  <img src="{% static 'images/faces/admin.jpg'% }" alt="image">
                   <span class="availability-status online"></span>
                 </div>
                 <div class="nav-profile-text">
@@ -181,13 +181,13 @@
             <li class="nav-item nav-profile">
               <a href="#" class="nav-link">
                 <div class="nav-profile-image">
-                  <img src="{% static 'images/faces/face1.jpg' %} " alt="profile" />
+                  <img src="{% static 'images/faces/admin.jpg' %} " alt="profile" />
                   <span class="login-status online"></span>
                   <!--change to offline or busy as needed-->
                 </div>
                 <div class="nav-profile-text d-flex flex-column">
-                  <span class="font-weight-bold mb-2">David Grey. H</span>
-                  <span class="text-secondary text-small">Project Manager</span>
+                  <span class="font-weight-bold mb-2">Admin</span>
+                  <span class="text-secondary text-small">system analyst</span>
                 </div>
                 <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
               </a>
@@ -200,21 +200,39 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-                <span class="menu-title">Basic UI Elements</span>
+                <span class="menu-title">Live Feed</span>
                 <i class="menu-arrow"></i>
                 <i class="mdi mdi-crosshairs-gps menu-icon"></i>
               </a>
               <div class="collapse" id="ui-basic">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/ui-features/buttons.html">Buttons</a>
+                    <a class="nav-link" href="/templates/live_feed/in.html">Entrance</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/ui-features/dropdowns.html">Dropdowns</a>
+                    <a class="nav-link" href="pages/ui-features/dropdowns.html">Exit</a>
+                  </li>
+              
+                  
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                <span class="menu-title">Live Stream</span>
+                <i class="menu-arrow"></i>
+                <i class="mdi mdi-crosshairs-gps menu-icon"></i>
+              </a>
+              <div class="collapse" id="ui-basic">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/templates/live_feed/in.html">Entrance</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="pages/ui-features/typography.html">Typography</a>
+                    <a class="nav-link" href="pages/ui-features/dropdowns.html">Exit</a>
                   </li>
+              
+                  
                 </ul>
               </div>
             </li>
@@ -348,7 +366,7 @@
                             <tr>
                               <td> {{ employee.id }} </td>
                               <td>
-                                <img src="{% static 'images/faces/face1.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
+                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
                               </td>
                               <td> {{ employee.department }} </td>
                               <td>
@@ -386,7 +404,7 @@
                             <tr>
                               <td> {{ visitor.id }} </td>
                               <td>
-                                <img src="{% static 'images/faces/face1.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
+                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
                               </td>
                               <td> {{ visitor.department }} </td>
                               <td>
@@ -418,7 +436,7 @@
                       <ul class="list-unstyled">
                         {% for visitor in recent_visitors %}
                         <li class="d-flex align-items-center mb-4">
-                          <img src="{% static 'images/faces/face1.jpg' %}" class="me-3" alt="image">
+                          <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
                           <div>
                             <h5>{{ visitor.name }}</h5>
                             <p class="text-muted">{{ visitor.department }}</p>

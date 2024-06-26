@@ -28,7 +28,7 @@
     <!-- partial:partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-          <a class="navbar-brand brand-logo" href="index.html"><img src="{% static 'images/logo.svg' %}" alt="logo" /></a>
+          <a class="navbar-brand brand-logo" href="index.html"><img src="{% static 'images/logo1.svg' %}" alt="logo" /></a>
           <a class="navbar-brand brand-logo-mini" href="index.html"><img src="{% static 'images/logo-mini.svg' %}" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -49,7 +49,7 @@
             <li class="nav-item nav-profile dropdown">
               <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="nav-profile-img">
-                  <img src="{% static 'images/faces/face1.jpg'% }" alt="image">
+                  <img src="{% static 'images/faces/admin.jpg'% }" alt="image">
                   <span class="availability-status online"></span>
                 </div>
                 <div class="nav-profile-text">
@@ -181,7 +181,7 @@
             <li class="nav-item nav-profile">
               <a href="#" class="nav-link">
                 <div class="nav-profile-image">
-                  <img src="{% static 'images/faces/face1.jpg' %} " alt="profile" />
+                  <img src="{% static 'images/faces/admin.jpg' %} " alt="profile" />
                   <span class="login-status online"></span>
                   <!--change to offline or busy as needed-->
                 </div>
@@ -348,7 +348,7 @@
                             <tr>
                               <td> {{ employee.id }} </td>
                               <td>
-                                <img src="{% static 'images/faces/face1.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
+                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
                               </td>
                               <td> {{ employee.department }} </td>
                               <td>
@@ -386,7 +386,7 @@
                             <tr>
                               <td> {{ visitor.id }} </td>
                               <td>
-                                <img src="{% static 'images/faces/face1.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
+                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
                               </td>
                               <td> {{ visitor.department }} </td>
                               <td>
@@ -418,7 +418,7 @@
                       <ul class="list-unstyled">
                         {% for visitor in recent_visitors %}
                         <li class="d-flex align-items-center mb-4">
-                          <img src="{% static 'images/faces/face1.jpg' %}" class="me-3" alt="image">
+                          <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
                           <div>
                             <h5>{{ visitor.name }}</h5>
                             <p class="text-muted">{{ visitor.department }}</p>
