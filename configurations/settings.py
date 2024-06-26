@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'livefeed',
     'livestream',
     'Registration',
+    'Reports'
     
 ]
 
