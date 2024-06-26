@@ -329,7 +329,7 @@
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
                   <i class="mdi mdi-home"></i>
-                </span> Live Feed Exit Point
+                </span> New Employee Registration 
               </h3>
               <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
@@ -341,116 +341,7 @@
             </div>
             <div class="row">
               
-            </div>
-            <div class="row">
-              
-              <div class="row">
-                <div class="col-12 grid-margin">
-                  <div class="card">
-                    <div class="card-body">
-                      <h4 class="card-title">Registered Employees</h4>
-                      <div class="table-responsive">
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th> ID </th>
-                              <th> Employee Name </th>
-                              <th> Department </th>
-                              <th> Status </th>
-                              <th> Time Stamp </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <!-- Loop through the employees data here -->
-                            {% for employee in employees %}
-                            <tr>
-                              <td> {{ employee.id }} </td>
-                              <td>
-                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
-                              </td>
-                              <td> {{ employee.department }} </td>
-                              <td>
-                                <label class="badge badge-gradient-{{ employee.status|lower }}">{{ employee.status }}</label>
-                              </td>
-                              <td> {{ employee.timestamp }} </td>
-                            </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12 grid-margin">
-                  <div class="card">
-                    <div class="card-body">
-                      <h4 class="card-title">Visitors</h4>
-                      <div class="table-responsive">
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th> ID </th>
-                              <th> Visitor Name </th>
-                              <th> Department </th>
-                              <th> Status </th>
-                              <th> Time Stamp </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <!-- Loop through the visitors data here -->
-                            {% for visitor in visitors %}
-                            <tr>
-                              <td> {{ visitor.id }} </td>
-                              <td>
-                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
-                              </td>
-                              <td> {{ visitor.department }} </td>
-                              <td>
-                                <label class="badge badge-gradient-{{ visitor.status|lower }}">{{ visitor.status }}</label>
-                              </td>
-                              <td> {{ visitor.timestamp }} </td>
-                            </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <div class="row">
-              <div class="col-lg-5 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body p-0 d-flex">
-                    <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-4 grid-margin">
-                  <div class="card">
-                    <div class="card-body">
-                      <h4 class="card-title">Recent Visitors</h4>
-                      <ul class="list-unstyled">
-                        {% for visitor in recent_visitors %}
-                        <li class="d-flex align-items-center mb-4">
-                          <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
-                          <div>
-                            <h5>{{ visitor.name }}</h5>
-                            <p class="text-muted">{{ visitor.department }}</p>
-                          </div>
-                        </li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            </div>
-          </div>
+           
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
