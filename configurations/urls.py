@@ -24,5 +24,7 @@ urlpatterns = [
     path("livestream/", include ("livestream.urls")),
     path("registration/", include ("Registration.urls")),
     path("reports/", include ("Reports.urls")),
+    path("details/", include ("details.urls")),
+    path("dashboard/", include ("dashboard.urls")),
 
 ]
