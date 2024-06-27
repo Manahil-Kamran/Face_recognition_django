@@ -153,7 +153,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'index'%}">
+              <a class="nav-link" href="index.html">
                 <span class="menu-title">Dashboard</span>
                 <i class="mdi mdi-home menu-icon"></i>
               </a>
@@ -197,24 +197,83 @@
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'details'%}">
+              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
                 <span class="menu-title">Employees Details</span>
                 <i class="mdi mdi-contacts menu-icon"></i>
               </a>
+              <div class="collapse" id="icons">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/icons/font-awesome.html">Font Awesome</a>
+                  </li>
+                </ul>
+              </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'reports'%}">
-                <span class="menu-title">Attendance Reports</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
+              <a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms">
+                <span class="menu-title">Reports</span>
+                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
               </a>
+              <div class="collapse" id="forms">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/forms/basic_elements.html">Form Elements</a>
+                  </li>
+                </ul>
+              </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'New_Employee_Registration'%}">
-                <span class="menu-title">New Employee Registration</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
+              <a class="nav-link" data-bs-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
+                <span class="menu-title">Charts</span>
+                <i class="mdi mdi-chart-bar menu-icon"></i>
               </a>
+              <div class="collapse" id="charts">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/charts/chartjs.html">ChartJs</a>
+                  </li>
+                </ul>
+              </div>
             </li>
-            
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
+                <span class="menu-title">Tables</span>
+                <i class="mdi mdi-table-large menu-icon"></i>
+              </a>
+              <div class="collapse" id="tables">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/tables/basic-table.html">Basic table</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+                <span class="menu-title">User Pages</span>
+                <i class="menu-arrow"></i>
+                <i class="mdi mdi-lock menu-icon"></i>
+              </a>
+              <div class="collapse" id="auth">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/samples/blank-page.html"> Blank Page </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/samples/login.html"> Login </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/samples/register.html"> Register </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/samples/error-404.html"> 404 </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="pages/samples/error-500.html"> 500 </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="docs/documentation.html" target="_blank">
                 <span class="menu-title">Documentation</span>
@@ -230,7 +289,7 @@
               <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
                   <i class="mdi mdi-home"></i>
-                </span> Live Stream Entrance Point
+                </span> Live Feed Exit Point
               </h3>
               <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
@@ -241,20 +300,124 @@
               </nav>
             </div>
             <div class="row">
-              <div class="col-12 grid-margin">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Live Feed</h4>
-                    <div class="live-feed-container">
-                      <!-- This is where the live feed will be displayed -->
-                      <iframe src="https://example.com/live-feed" frameborder="0" width="100%" height="500"></iframe>
+              
+            </div>
+            <div class="row">
+              
+              <div class="row">
+                <div class="col-12 grid-margin">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Registered Employees</h4>
+                      <div class="table-responsive">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th> ID </th>
+                              <th> Employee Name </th>
+                              <th> Department </th>
+                              <th> Status </th>
+                              <th> Time Stamp </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!-- Loop through the employees data here -->
+                            {% for employee in employees %}
+                            <tr>
+                              <td> {{ employee.id }} </td>
+                              <td>
+                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
+                              </td>
+                              <td> {{ employee.department }} </td>
+                              <td>
+                                <label class="badge badge-gradient-{{ employee.status|lower }}">{{ employee.status }}</label>
+                              </td>
+                              <td> {{ employee.timestamp }} </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <div class="row">
+                <div class="col-12 grid-margin">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Visitors</h4>
+                      <div class="table-responsive">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th> ID </th>
+                              <th> Visitor Name </th>
+                              <th> Department </th>
+                              <th> Status </th>
+                              <th> Time Stamp </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!-- Loop through the visitors data here -->
+                            {% for visitor in visitors %}
+                            <tr>
+                              <td> {{ visitor.id }} </td>
+                              <td>
+                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
+                              </td>
+                              <td> {{ visitor.department }} </td>
+                              <td>
+                                <label class="badge badge-gradient-{{ visitor.status|lower }}">{{ visitor.status }}</label>
+                              </td>
+                              <td> {{ visitor.timestamp }} </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="row">
+              <div class="col-lg-5 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body p-0 d-flex">
+                    <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4 grid-margin">
+                  <div class="card">
+                    <div class="card-body">
+                      <h4 class="card-title">Recent Visitors</h4>
+                      <ul class="list-unstyled">
+                        {% for visitor in recent_visitors %}
+                        <li class="d-flex align-items-center mb-4">
+                          <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
+                          <div>
+                            <h5>{{ visitor.name }}</h5>
+                            <p class="text-muted">{{ visitor.department }}</p>
+                          </div>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
             </div>
           </div>
-        </div>
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+          <footer class="footer">
+            <div class="d-sm-flex justify-content-center justify-content-sm-between">
+              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023 <a href="https://www.bootstrapdash.com/" target="_blank">BootstrapDash</a>. All rights reserved.</span>
+              <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+            </div>
           </footer>
           <!-- partial -->
         </div>
