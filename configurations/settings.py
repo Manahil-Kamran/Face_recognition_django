@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'Registration',
     'Reports',
     'details',
-    'dashboard'
+    'dashboard',
+    'similarity'
     
 ]
 
