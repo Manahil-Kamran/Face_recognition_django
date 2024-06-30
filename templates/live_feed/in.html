@@ -214,6 +214,13 @@
                 <i class="mdi mdi-contacts menu-icon"></i>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'similarity'%}">
+                <span class="menu-title">Similarity Matrix</span>
+                <i class="mdi mdi-contacts menu-icon"></i>
+              </a>
+            </li>
+            
             
             <li class="nav-item">
               <a class="nav-link" href="docs/documentation.html" target="_blank">
@@ -222,7 +229,7 @@
               </a>
             </li>
           </ul>
-        </nav>
+      </nav>
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
@@ -254,6 +261,7 @@
                         <table class="table">
                           <thead>
                             <tr>
+                              <th> Picture </th>
                               <th> ID </th>
                               <th> Employee Name </th>
                               <th> Department </th>
@@ -263,6 +271,14 @@
                           </thead>
                           <tbody>
                             <!-- Loop through the employees data here -->
+                             <tr>
+                              <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td>
+                              <td>1</td>
+                              <td>Manahil</td>
+                              <td>GIL</td>
+                              <td>Present</td>
+                              <td>22:10:22</td>
+                             </tr>
                             {% for employee in employees %}
                             <tr>
                               <td> {{ employee.id }} </td>

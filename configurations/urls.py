@@ -26,5 +26,6 @@ urlpatterns = [
     path("reports/", include ("Reports.urls")),
     path("details/", include ("details.urls")),
     path("dashboard/", include ("dashboard.urls")),
+    path("similarity/", include ("similarity.urls")),
 
 ]
