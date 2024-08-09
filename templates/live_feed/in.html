@@ -273,7 +273,7 @@
                           </thead>
                           <tbody>
                             <!-- Loop through the employees data here -->
-                             {% for p in pr %}
+                            
                              <tr>
                               <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td>
                               <td>{{p.id}}</td>
@@ -282,7 +282,7 @@
                               <td>Present</td>
                               <td>{{p.date_created}}</td>
                              </tr>
-                             {%endfor%}
+                           
                             {% for employee in employees %}
                             <tr>
                               <td> {{ employee.id }} </td>

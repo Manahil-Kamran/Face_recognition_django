@@ -4,7 +4,7 @@ from .views import Employees_Details
 
 
 urlpatterns = [
-    path("details", Employees_Details, name="details"),
+    path("details", Employees_Details.as_view(), name="details"),
 
     
 ]

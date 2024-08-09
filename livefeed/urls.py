@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import path,include
-from .views import LiveFeedIn, LiveFeed_out
+from .views import LiveFeed_out, LiveFeed_in
 
 
 urlpatterns = [
-    path("IN", LiveFeedIn.as_view(), name="livefeedin"),
+    path("IN", LiveFeed_in, name="livefeedin"),
     path("OUT", LiveFeed_out, name= "livefeedout"),
     
 ]
