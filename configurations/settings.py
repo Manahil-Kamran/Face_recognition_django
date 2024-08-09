@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'configurations.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'your_database_name',
+        'NAME': 'NewFeatures-DB',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'localhost',
