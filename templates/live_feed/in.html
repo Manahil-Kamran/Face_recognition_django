@@ -258,6 +258,7 @@
                     <div class="card-body">
                       <h4 class="card-title">Registered Employees</h4>
                       <div class="table-responsive">
+                        
                         <table class="table">
                           <thead>
                             <tr>
@@ -272,14 +273,16 @@
                           </thead>
                           <tbody>
                             <!-- Loop through the employees data here -->
+                             {% for p in pr %}
                              <tr>
                               <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td>
-                              <td>1</td>
-                              <td>Manahil</td>
-                              <td>GIL</td>
+                              <td>{{p.id}}</td>
+                              <td>{{p.full_name}}</td>
+                              <td>{{p.department_name}}</td>
                               <td>Present</td>
-                              <td>22:10:22</td>
+                              <td>{{p.date_created}}</td>
                              </tr>
+                             {%endfor%}
                             {% for employee in employees %}
                             <tr>
                               <td> {{ employee.id }} </td>
