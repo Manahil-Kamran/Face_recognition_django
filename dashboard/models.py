@@ -1,17 +1,17 @@
 from django.db import models
 
-class AdminLogin(models.Model):
-    id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
-    username = models.CharField(max_length=100, null=True, blank=True)
-    email = models.CharField(max_length=50, null=True, blank=True)
-    password = models.CharField(max_length=100, null=True, blank=True)
-    is_active = models.BooleanField(default=True)  # True if active, False otherwise
-    avatar_url = models.CharField(max_length=255, null=True, blank=True)
-    created_by = models.CharField(max_length=256, default='Admin', null=True, blank=True)
-    date_created = models.DateTimeField(auto_now_add=False)  # Auto-fill with current timestamp
+# class AdminLogin(models.Model):
+#     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
+#     username = models.CharField(max_length=100, null=True, blank=True)
+#     email = models.CharField(max_length=50, null=True, blank=True)
+#     password = models.CharField(max_length=100, null=True, blank=True)
+#     is_active = models.BooleanField(default=True)  # True if active, False otherwise
+#     avatar_url = models.CharField(max_length=255, null=True, blank=True)
+#     created_by = models.CharField(max_length=256, default='Admin', null=True, blank=True)
+#     date_created = models.DateTimeField(auto_now_add=False)  # Auto-fill with current timestamp
 
-    class Meta:
-        db_table = "admin_login"
+    # class Meta:
+    #     db_table = "admin_login"
 class PersonRegistration(models.Model):
     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
     full_name = models.CharField(max_length=256, null=True, blank=True)
