@@ -1,4 +1,6 @@
 {% load static %}
+{% load url_tags %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -52,7 +54,14 @@
                   <img src="{% static 'images/faces/admin.jpg'% }" alt="image">
                   <span class="availability-status online"></span>
                 </div>
-                <div class="nav-profile-text">
+                <div class="nav-profile-text"><td>
+                  {% get_face_image_url p as img_url %}
+                  {% if img_url %}
+                      <img src="{{ MEDIA_URL }}{{ img_url }}" alt="Employee Picture" width="220" height="220">
+                  {% else %}
+                      <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220">
+                  {% endif %}
+              </td>
                   <p class="mb-1 text-black">Admin</p>
                 </div>
               </a>
@@ -121,7 +130,14 @@
               <a class="nav-link" href="#">
                 <i class="mdi mdi-power"></i>
               </a>
-            </li>
+            </li><td>
+              {% get_face_image_url p as img_url %}
+              {% if img_url %}
+                  <img src="{{ MEDIA_URL }}{{ img_url }}" alt="Employee Picture" width="220" height="220">
+              {% else %}
+                  <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220">
+              {% endif %}
+          </td>
             <li class="nav-item nav-settings d-none d-lg-block">
               <a class="nav-link" href="#">
                 <i class="mdi mdi-format-line-spacing"></i>
@@ -252,26 +268,34 @@
             <div class="row">
               
               <div class="row">
-                <div class="col-12 grid-margin">
+                <div class="col-12 ">
                   <div class="card">
                     <div class="card-body">
                       <h4 class="card-title">Registered Employees</h4>
                       <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" style="table-layout: fixed; width: 100%;">
                           <thead>
                             <tr>
-                              <th> Picture </th>
-                              <th> ID </th>
-                              <th> Employee Name </th>
-                              <th> Department </th>
-                              <th> Details </th>
-                              <th> Edit Profile </th>
+                              <th style="width: 10%;"> Picture </th>
+                              <th style="width: 10%;"> ID </th>
+                              <th style="width: 30%;"> Employee Name </th>
+                              <th style="width: 20%;"> Department </th>
+                              <th style="width: 20%;"> Details </th>
+                              <th style="width: 10%;"> Edit Profile </th>
                             </tr>
                           </thead>
                           <tbody>
                             {% for p in pr %}
                              <tr>
-                              <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td>
+                              <td>
+                                {% get_face_image_url p as img_url %}
+                                {% if img_url %}
+                                    <img src="/media/compress_images/{{ img_url }}" alt="Employee Picture" width="220" height="220">
+                                {% else %}
+                                    <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220">
+                                {% endif %}
+                            </td>
+                              <!-- <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td> -->
                               <td>{{p.id}}</td>
                               <td>{{p.full_name}}</td>
                               <td>{{p.department_name}}</td>
@@ -279,23 +303,13 @@
                               <td>{{p.date_created}}</td>
                              </tr>
                              {%endfor%}
-                            <!-- Loop through the employees data here -->
-                            {% for employee in employees %}
-                            <tr>
-                              <td> {{ employee.id }} </td>
-                              <td>
-                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
-                              </td>
-                              <td> {{ employee.department }} </td>
-                              <td>
-                                <label class="badge badge-gradient-{{ employee.status|lower }}">{{ employee.status }}</label>
-                              </td>
-                              <td> {{ employee.timestamp }} </td>
-                            </tr>
-                            {% endfor %}
+                            
+                          
                           </tbody>
                         </table>
                       </div>
+                      <!-- Include the pagination template and pass the page_obj -->
+                      {% include 'pagination.html' with page_obj=pr %}
                     </div>
                   </div>
                 </div>

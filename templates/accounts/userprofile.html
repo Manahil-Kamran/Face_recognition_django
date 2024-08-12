@@ -1,20 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Admin Profile</title>
-	<link rel="stylesheet" href="styles.css"> <!-- link to your stylesheet -->
-</head>
-<body>
-	<!-- Header section -->
-	<header>
-		<nav>
-			<ul>
-				<li><a href="#">Dashboard</a></li>
-				<li><a href="#">Settings</a></li>
-				<li><a href="#">Logout</a></li>
-			</ul>
-		</nav>
-	</header>
+{% extends '../base.html'%}
+{% load static %}
+
+  {% block content %}
 
 	<!-- Main content section -->
 	<main>
@@ -53,20 +40,4 @@
 			</form>
 		</div>
 	</main>
-
-	<!-- Footer section -->
-	<footer>
-		<p>&copy;  Admin Panel</p>
-	</footer>
-
-	<!-- JavaScript code to toggle edit profile form -->
-	<script>
-		const editProfileBtn = document.querySelector('.edit-profile-btn');
-		const profileEditForm = document.querySelector('.profile-edit-form');
-
-		editProfileBtn.addEventListener('click', () => {
-			profileEditForm.style.display = 'block';
-		});
-	</script>
-</body>
-</html>
+	{% endblock %}
