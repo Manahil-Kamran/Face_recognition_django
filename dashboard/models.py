@@ -31,7 +31,7 @@ class FaceCoding(models.Model):
 
 class PersonAttend(models.Model):
     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
-    person_id = models.ForeignKey(PersonRegistration, on_delete=models.CASCADE)  # Foreign key to PersonRegistration
+    person = models.ForeignKey(PersonRegistration, on_delete=models.CASCADE)  # Foreign key to PersonRegistration
     face_feature = models.TextField(null=True, blank=True)
     blob_face_feature = models.BinaryField(null=True, blank=True)  # To store binary data
     img_url = models.CharField(max_length=256, null=True, blank=True)

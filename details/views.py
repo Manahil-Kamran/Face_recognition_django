@@ -14,6 +14,8 @@ class Employees_Details(TemplateView):
 
         return render(request, self.template_name, {"pr": pr})
 
+
+
 # Create your views here.
 # class Employees_Details(TemplateView):
 #     template_name = "details/details.html"

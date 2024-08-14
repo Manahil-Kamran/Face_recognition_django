@@ -1,158 +1,135 @@
-{% extends '../base.html'%}
+{% extends '../base.html' %}
 {% load static %}
 
-  {% block content %}
-  <div class="main-panel">
-    <div class="content-wrapper">
-      <div class="page-header">
-        <h3 class="page-title">
-          <span class="page-title-icon bg-gradien{% extends '../base.html'%}
-          {% load static %}
-          
-            {% block content %}="page">
-              <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div class="row">
-        
-      </div>
-      <div class="row">
-        
-        <div class="row">
-          <div class="col-12 grid-margin">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Registered Employees</h4>
-                <div class="table-responsive">
-                  
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th> Picture </th>
-                        <th> ID </th>
-                        <th> Employee Name </th>
-                        <th> Department </th>
-                        <th> Status </th>
-                        <th> Time Stamp </th>
-                        <th> Similarity index </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- Loop through the employees data here -->
-                      
-                       <tr>
-                        <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td>
-                        <td>{{p.id}}</td>
-                        <td>{{p.full_name}}</td>
-                        <td>{{p.department_name}}</td>
-                        <td>Present</td>
-                        <td>{{p.date_created}}</td>
-                       </tr>
-                     
-                      {% for employee in employees %}
-                      <tr>
-                        <td> {{ employee.id }} </td>
-                        <td>
-                          <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
-                        </td>
-                        <td> {{ employee.department }} </td>
-                        <td>
-                          <label class="badge badge-gradient-{{ employee.status|lower }}">{{ employee.status }}</label>
-                        </td>
-                        <td> {{ employee.timestamp }} </td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12 grid-margin">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Visitors</h4>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th> Picture </th>
-                        <th> ID </th>
-                        <th> Visitor Name </th>
-                        <th> Department </th>
-                        <th> Status </th>
-                        <th> Time Stamp </th>
-                        <th> Similarity index </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- Loop through the visitors data here -->
-                      {% for visitor in visitors %}
-                      <tr>
-                        <td> {{ visitor.id }} </td>
-                        <td>
-                          <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
-                        </td>
-                        <td> {{ visitor.department }} </td>
-                        <td>
-                          <label class="badge badge-gradient-{{ visitor.status|lower }}">{{ visitor.status }}</label>
-                        </td>
-                        <td> {{ visitor.timestamp }} </td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <div class="row">
-        <div class="col-lg-5 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body p-0 d-flex">
-              <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4 grid-margin">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">Recent Visitors</h4>
-                <ul class="list-unstyled">
-                  {% for visitor in recent_visitors %}
-                  <li class="d-flex align-items-center mb-4">
-                    <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
-                    <div>
-                      <h5>{{ visitor.name }}</h5>
-                      <p class="text-muted">{{ visitor.department }}</p>
-                    </div>
-                  </li>
+{% block content %}
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="page-header">
+      <h3 class="page-title">
+        <span class="page-title-icon bg-gradient">
+          <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+        </span>
+        Overview
+      </h3>
+    </div>
+    <div class="row">
+      <!-- Content here -->
+    </div>
+    <div class="row">
+      <div class="col-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Registered Employees</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Picture</th>
+                    <th>ID</th>
+                    <th>Employee Name</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Time Stamp</th>
+                    <th>Similarity Index</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Loop through the employees data here -->
+                  {% for employee in employees %}
+                  <tr>
+                    <td><img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image" width="220" height="220"></td>
+                    <td>{{ employee.id }}</td>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.department }}</td>
+                    <td>
+                      <label class="badge badge-gradient-{{ employee.status|lower }}">{{ employee.status }}</label>
+                    </td>
+                    <td>{{ employee.timestamp }}</td>
+                  </tr>
                   {% endfor %}
-                </ul>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-        
       </div>
     </div>
-    <!-- content-wrapper ends -->
-    <!-- partial:partials/_footer.html -->
-    <footer class="footer">
-      <div class="d-sm-flex justify-content-center justify-content-sm-between">
-        <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023 <a href="https://www.bootstrapdash.com/" target="_blank">BootstrapDash</a>. All rights reserved.</span>
-        <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+    <div class="row">
+      <div class="col-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Visitors</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Picture</th>
+                    <th>ID</th>
+                    <th>Visitor Name</th>
+                    <th>Department</th>
+                    <th>Status</th>
+                    <th>Time Stamp</th>
+                    <th>Similarity Index</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Loop through the visitors data here -->
+                  {% for visitor in visitors %}
+                  <tr>
+                    <td><img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"></td>
+                    <td>{{ visitor.id }}</td>
+                    <td>{{ visitor.name }}</td>
+                    <td>{{ visitor.department }}</td>
+                    <td>
+                      <label class="badge badge-gradient-{{ visitor.status|lower }}">{{ visitor.status }}</label>
+                    </td>
+                    <td>{{ visitor.timestamp }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </footer>
-    <!-- partial -->
+    </div>
+    <div class="row">
+      <div class="col-lg-5 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body p-0 d-flex">
+            <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Recent Visitors</h4>
+            <ul class="list-unstyled">
+              {% for visitor in recent_visitors %}
+              <li class="d-flex align-items-center mb-4">
+                <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
+                <div>
+                  <h5>{{ visitor.name }}</h5>
+                  <p class="text-muted">{{ visitor.department }}</p>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <!-- main-panel ends -->
-</div>                                                   
-
-  {% endblock %}
+  <!-- content-wrapper ends -->
+  <!-- partial:partials/_footer.html -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023 <a href="https://www.bootstrapdash.com/" target="_blank">BootstrapDash</a>. All rights reserved.</span>
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+    </div>
+  </footer>
+  <!-- partial -->
+</div>
+<!-- main-panel ends -->
+{% endblock %}
