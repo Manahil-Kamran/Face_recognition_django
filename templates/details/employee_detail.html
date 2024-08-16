@@ -1,0 +1,191 @@
+{% extends '../base.html' %}
+{% load static %}
+{% load url_tags %}
+<style>
+    .selected {
+        background-color: #06010e;
+    }
+</style>
+
+{% block content %}
+<!-- partial -->
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                    <i class="mdi mdi-home"></i>
+                </span> Employee Details
+            </h3>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-md-12 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+
+                    <div class="card-body">
+                  
+                      <h4 class="font-weight-normal mb-3">Employee Information</h4>
+                  
+                      <div class="row">
+                  
+                        <div class="col-md-8">
+                  
+                          <p><strong>Name:</strong> {{ employee.full_name }}</p>
+                  
+                          <p><strong>Department:</strong> {{ employee.department_name }}</p>
+                  
+                        </div>
+                  
+                        <div class="col-md-4 text-right">
+                  
+                          {% get_face_image_url employee as img_url %}
+                  
+                          {% if img_url %}
+                  
+                            <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="img-fluid">
+                  
+                          {% else %}
+                  
+                            <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="img-fluid">
+                  
+                          {% endif %}
+                  
+                        </div>
+                  
+                      </div>
+                  
+                    </div>
+                  
+                  </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 ">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Registered Employees</h4>
+                  <div class="table-responsive">
+                    <table class="table" style="table-layout: fixed; width: 100%;">
+                      <thead>
+                        <tr>
+                          <th style="width: 20%;">Select</th>
+                          <th style="width: 20%;"> Picture </th>
+                          <th style="width: 10%;"> Name </th>
+                          <th style="width: 20%;"> Camera </th>
+                          <th style="width: 30%;"> Time Sent </th>
+                      
+                          <th style="width: 20%;"> Actions </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in record %}
+                        <tr data-id="{{ p.id }}">
+                            <td>
+                                <input type="checkbox" class="select-checkbox" data-id="{{ p.id }}">
+                            </td>
+                            <td>
+                                {% get_face_image_url p as img_url %}
+                                {% if img_url %}
+                                    <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="selectable-img">
+                                {% else %}
+                                    <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="selectable-img">
+                                {% endif %}
+                            </td>
+                            <td>{{ p.person.full_name }}</td>
+                            <td>{{ p.camera_id }}{{p.id}}</td>
+                            <td>{{ p.time_sent }}</td>
+                            <td>
+                                <div class="button-container">
+                                    <a class="btn btn-gradient-primary btn-sm" href="{% url 'edit_profile' p.id %}">Move Record</a>
+                                    <form action="{% url 'employee_delete_record' p.id %}" method="post" style="display:inline;" onsubmit="confirmDelete(event)">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger">Delete Profile</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                  </div>
+                  <!-- Include the pagination template and pass the page_obj -->
+                  {% include 'pagination.html' with page_obj=record %}
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="row mt-4">
+            
+            <label for="exampleFormControlSelect1">Large select</label>
+            <select class="form-select form-select-lg" id="exampleFormControlSelect1">
+                {%for emp in all_employees%}
+            
+              <option value="{{emp.id}}">{{emp.full_name}}</option>
+                {%endfor%}
+             
+            </select>
+          
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('tbody .select-checkbox');
+        const imgs = document.querySelectorAll('tbody .selectable-img');
+
+        // Handle checkbox selection
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr');
+                if (this.checked) {
+                    row.classList.add('selected');
+                } else {
+                    row.classList.remove('selected');
+                }
+            });
+        });
+
+        // Handle image clicks
+        imgs.forEach(img => {
+            img.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevent the click from propagating to the row
+
+                // Get the checkbox of the clicked image
+                const checkbox = this.closest('tr').querySelector('.select-checkbox');
+
+                // Toggle the checkbox
+                checkbox.checked = !checkbox.checked;
+
+                // Trigger the change event for the checkbox
+                checkbox.dispatchEvent(new Event('change'));
+            });
+        });
+
+        // Function to get selected IDs
+        function getSelectedIds() {
+            const selectedCheckboxes = document.querySelectorAll('tbody .select-checkbox:checked');
+            const ids = Array.from(selectedCheckboxes).map(checkbox => checkbox.getAttribute('data-id'));
+            return ids;
+        }
+
+        // Example usage: Log selected IDs to the console
+        document.getElementById('get-selected-ids').addEventListener('click', function() {
+            const selectedIds = getSelectedIds();
+            console.log('Selected IDs:', selectedIds);
+        });
+    });
+</script>
+
+<!-- Button to trigger getting selected IDs (for example purposes)
+<button id="get-selected-ids">Get Selected IDs</button> -->
+
+{% endblock %}

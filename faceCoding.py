@@ -30,7 +30,7 @@ for index, row in merged_df.iterrows():
             person = person_instance,
             face_feature = row["face_feature"], 
             blob_face_feature = row["blob_face_feature"],
-            img_url = row["img_url"],
+            img_url ="attend_img/"+row["img_url"],
             is_current = row["is_current"],
             time_sent = row["time_sent"],
             date_created = row["date_created"]

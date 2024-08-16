@@ -13,7 +13,7 @@ django.setup()
 PersonRegistration = apps.get_model('dashboard', 'PersonRegistration')
 
 # Create engine for connecting to MySQL
-engine = create_engine("mysql+pymysql://root:gil12345@localhost:3306/new01")
+engine = create_engine("mysql+pymysql://root:gil12345@localhost:3306/march")
 
 # Fetch person_id and image_url from person_registration
 face_coding_query = "SELECT * FROM person_registration"

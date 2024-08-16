@@ -24,6 +24,42 @@
     <link rel="stylesheet" href="{% static  'css/style.css' %}">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+    <script>
+      function confirmDelete(event) {
+        if (!confirm("Are you sure you want to delete this profile? This action cannot be undone.")) {
+          event.preventDefault(); // Prevent form submission if not confirmed
+        }
+      }
+    </script>
+    <!-- Inline CSS -->
+    <style>
+      .button-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 5px; /* Adjust spacing between buttons */
+      }
+
+      .button-container a,
+      .button-container form {
+          margin: 0;
+      }
+
+      .button-container button {
+          margin: 0;
+          padding: 5px 10px; /* Adjust padding for buttons */
+          font-size: 12px; /* Adjust font size */
+      }
+
+      table {
+          width: 100%;
+          table-layout: fixed; /* Prevent table from expanding too much */
+      }
+
+      table td, table th {
+          padding: 5px; /* Adjust padding */
+          margin: 0;
+      }
+  </style>
   </head>
   <body>
     </div>  
@@ -276,12 +312,12 @@
                         <table class="table" style="table-layout: fixed; width: 100%;">
                           <thead>
                             <tr>
-                              <th style="width: 10%;"> Picture </th>
+                              <th style="width: 20%;"> Picture </th>
                               <th style="width: 10%;"> ID </th>
-                              <th style="width: 30%;"> Employee Name </th>
-                              <th style="width: 20%;"> Department </th>
-                              <th style="width: 20%;"> Details </th>
-                              <th style="width: 10%;"> Edit Profile </th>
+                              <th style="width: 20%;"> Employee Name </th>
+                              <th style="width: 30%;"> Department </th>
+                          
+                              <th style="width: 20%;"> Actions </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -290,20 +326,29 @@
                               <td>
                                 {% get_face_image_url p as img_url %}
                                 {% if img_url %}
-                                    <img src="/media/compress_images/{{ img_url }}" alt="Employee Picture" width="220" height="220">
+                                    <img src="{{img_url}}" alt="Employee Picture" width="220" height="220">
                                 {% else %}
                                     <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220">
                                 {% endif %}
-                            </td>
+                              </td>
                               <!-- <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td> -->
-                              <td>{{p.id}}</td>
-                              <td>{{p.full_name}}</td>
-                              <td>{{p.department_name}}</td>
-                              <td>Present</td>
-                              <td>{{p.date_created}}</td>
-                             </tr>
-                             {%endfor%}
-                            
+                              <td>{{ p.id }}</td>
+                              <td>{{ p.full_name }}</td>
+                              <td>{{ p.department_name }}</td>
+                              
+                              <td>
+                                <div class="button-container">
+                                    <a class="btn btn-gradient-primary btn-sm" href="{% url 'employee_detail' p.id %}">Details</a>
+                                    <a class="btn btn-gradient-primary btn-sm" href="{% url 'template_gallery' p.id %}">Template Gallery</a>
+                                    <a class="btn btn-gradient-primary btn-sm" href="{% url 'edit_profile' p.id %}">Edit Profile</a>
+                                    <form action="{% url 'delete_profile' p.id %}" method="post" style="display:inline;" onsubmit="confirmDelete(event)">
+                                        {% csrf_token %}
+                                        <button type="submit"  class="btn btn-outline-danger">Delete Profile</button>
+                                    </form>
+                                </div>
+                            </td>
+                              </tr>
+                              {% endfor %}
                           
                           </tbody>
                         </table>

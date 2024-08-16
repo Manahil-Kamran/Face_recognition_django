@@ -1,5 +1,6 @@
 {% extends '../base.html'%}
 {% load static %}
+{% load url_tags %}
 
 
   {% block content %}
@@ -44,22 +45,23 @@
                           </thead>
                           <tbody>
                             <!-- Loop through the employees data here -->
-                            {% for employee in employees %}
+                            {% for p in knowns %}
                             <tr>
-                              <td> {{ employee.id }} </td>
+                              <td><img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image" width="220" height="220"></td>
+                              <td>{{ p.id }}</td>
+                              <td>{{ p.person.full_name }}</td>
+                              <td>{{ p.person.department_name}}</td>
                               <td>
-                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ employee.name }}
+                                <label class="badge badge-gradient-{{ p.status|lower }}">{{ p.status }}</label>
                               </td>
-                              <td> {{ employee.department }} </td>
-                              <td>
-                                <label class="badge badge-gradient-{{ employee.status|lower }}">{{ employee.status }}</label>
-                              </td>
-                              <td> {{ employee.timestamp }} </td>
+                              <td>{{ p.time_sent }}</td>
                             </tr>
                             {% endfor %}
                           </tbody>
                         </table>
                       </div>
+                       <!-- Include the pagination template and pass the page_obj -->
+                      {% include 'pagination.html' with page_obj=knowns %}
                     </div>
                   </div>
                 </div>
@@ -84,22 +86,23 @@
                           </thead>
                           <tbody>
                             <!-- Loop through the visitors data here -->
-                            {% for visitor in visitors %}
+                            {% for visitor in unknowns %}
                             <tr>
-                              <td> {{ visitor.id }} </td>
-                              <td>
-                                <img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"> {{ visitor.name }}
-                              </td>
-                              <td> {{ visitor.department }} </td>
+                              <td><img src="{% static 'images/faces/admin.jpg' %}" class="me-2" alt="image"></td>
+                              <td>{{ visitor.id }}</td>
+                              <td>{{ visitor.person.full_name }}</td>
+                              <td>{{ visitor.person.department_name }}</td>
                               <td>
                                 <label class="badge badge-gradient-{{ visitor.status|lower }}">{{ visitor.status }}</label>
                               </td>
-                              <td> {{ visitor.timestamp }} </td>
+                              <td>{{ visitor.time_sent }}</td>
                             </tr>
                             {% endfor %}
                           </tbody>
                         </table>
                       </div>
+                      <!-- Include the pagination template and pass the page_obj -->
+             `        {% include 'pagination.html' with page_obj=unknowns %}
                     </div>
                   </div>
                 </div>

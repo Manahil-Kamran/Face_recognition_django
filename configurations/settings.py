@@ -84,13 +84,12 @@ WSGI_APPLICATION = 'configurations.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'NewFeatures-DB',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': 'localhost',
-            'port': 27017,
-        }
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'faceR',
+        'USER': 'myuser',
+        'PASSWORD': 'gil12345',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

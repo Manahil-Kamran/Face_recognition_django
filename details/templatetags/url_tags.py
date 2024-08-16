@@ -10,11 +10,11 @@ def get_face_image_url(person):
     
     try:
         print("person tracking",person)
-        face_coding = FaceCoding.objects.filter(person=person, is_current__in=[True]).first()
+        face_coding = FaceCoding.objects.filter(person=person, is_current=True).first()
         print("face coding",face_coding.img_url
               )
         if face_coding and face_coding.img_url:
-            return face_coding.img_url
+            return face_coding.img_url.url
         return None
     except Exception as e:
         # Log the error or handle it as needed
