@@ -1,10 +1,9 @@
-from django.contrib import admin
-from django.urls import path,include
+from django.urls import path
 from .views import Report
 
 
 urlpatterns = [
     
-    path("reports/", Report, name="reports"),
+    path("reports/", Report.as_view(), name="reports"),
  
 ]

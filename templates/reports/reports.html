@@ -1,6 +1,6 @@
 {% extends '../base.html'%}
 {% load static %}
-
+{% load url_tags %}
   {% block content %}
         <!-- partial -->
         <div class="main-panel">
@@ -11,26 +11,105 @@
                   <i class="mdi mdi-home"></i>
                 </span> Attendance Reports 
               </h3>
-              <nav aria-label="breadcrumb">
-                <ul class="breadcrumb">
-                  <li class="breadcrumb-item active" aria-current="page">
-                    <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
-                  </li>
-                </ul>
-              </nav>
+             
             </div>
-            <div class="row">
+              <!-- Page header and Employee Information goes here -->
+              <div class="row">
+                <div class="col-sm-6">
+                  <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                    <i class="fa fa-calendar"></i>&nbsp;
+                    <span></span> <i class="fa fa-caret-down"></i>
+                </div>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="col-12">
+                    <div class="card">
+                      <div class="card-body">
+                        <h4 class="card-title">Registered Employees</h4>
+                        <div class="table-responsive">
+                          <table class="table" style="table-layout: fixed; width: 100%;">
+                            <thead>
+                              <tr>
+                                <th style="width: 20%;">First Seen</th>
+                                <th style="width: 20%;">Last Seen</th>
+                                <th style="width: 10%;">Name</th>
+                                <th style="width: 20%;">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for p in record %}
+                              <tr data-id="{{ p.id }}">
+                                  
+                                  <td>
+                                      {% get_face_image_url p as img_url %}
+                                      {% if img_url %}
+                                          <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="selectable-img">
+                                      {% else %}
+                                          <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="selectable-img">
+                                      {% endif %}
+                                  </td>
+                                  <td>{{ p.person.full_name }}</td>
+                                  <td>{{ p.time_sent }}</td>
+                                  <td>
+                                      <div class="button-container">
+                                          <a class="btn btn-gradient-primary btn-sm" href="{% url 'edit_profile' p.id %}">Move Record</a>
+                                          <form action="{% url 'employee_delete_record' p.id %}" method="post" style="display:inline;" onsubmit="confirmDelete(event)">
+                                              {% csrf_token %}
+                                              <button type="submit" class="btn btn-outline-danger">Delete Profile</button>
+                                          </form>
+                                      </div>
+                                  </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
+                        <!-- Include the pagination template and pass the page_obj -->
+                        {% include 'pagination.html' with page_obj=record %}
+                      </div>
+                    </div>
+                  </div>
+              </div>
               
-           
-          <!-- content-wrapper ends -->
-          <!-- partial:partials/_footer.html -->
-          <footer class="footer">
-            <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2023 <a href="https://www.bootstrapdash.com/" target="_blank">BootstrapDash</a>. All rights reserved.</span>
-              <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
-            </div>
-          </footer>
-          <!-- partial -->
-        </div>
+          </div>
+      </div>
+
+      <script type="text/javascript">
+        $(function() {
+
+// Set the start and end date to today's date
+var start = moment();  // today's date
+var end = moment();    // today's date
+
+// Callback function to update the displayed date range
+function cb(start, end) {
+    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+}
+
+// Initialize the daterangepicker with "Today" as the default range
+$('#reportrange').daterangepicker({
+    startDate: start,
+    endDate: end,
+    ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+    }
+}, cb);
+
+// Set the initial display to today's date
+cb(start, end);
+
+});
+
+        </script>
+            
+      
         <!-- main-panel ends -->
         {% endblock %}
+
+        
