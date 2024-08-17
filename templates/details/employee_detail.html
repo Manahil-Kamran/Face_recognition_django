@@ -121,21 +121,60 @@
               </div>
             </div>
           </div>
-        <div class="row mt-4">
-            
-            <label for="exampleFormControlSelect1">Large select</label>
-            <select class="form-select form-select-lg" id="exampleFormControlSelect1">
-                {%for emp in all_employees%}
-            
-              <option value="{{emp.id}}">{{emp.full_name}}</option>
-                {%endfor%}
-             
+        <div class="row">
+            <div class="col-6">
+            <label for="exampleFormControlSelect1">Select Employees</label>
+            <select class="form-select form-select-lg" id="employee-select" style="width: 100%;">
+                <option value="">Select Employee</option>
             </select>
-          
+        </div>
         </div>
     </div>
 </div>
 
+<script type="text/javascript">
+    $('#employee-select').select2({
+        ajax: {
+            url: '{% url "employee-search-api" %}',  // URL to your Django view that handles search
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    page: params.page
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: data.results,
+                    pagination: {
+                        more: (params.page * 10) < data.total_count
+                    }
+                };
+            },
+            cache: true
+        },
+        placeholder: 'Search for an employee',
+        minimumInputLength: 1,
+        templateResult: formatRepo,
+        templateSelection: formatRepoSelection
+    });
+
+    function formatRepo (repo) {
+        if (repo.loading) {
+            return repo.text;
+        }
+
+        var markup =  repo.full_name ;
+
+        return markup;
+    }
+
+    function formatRepoSelection (repo) {
+        return repo.full_name || repo.text;
+    }
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

@@ -14,7 +14,8 @@ PersonAttend = apps.get_model('dashboard', 'PersonAttend')
 PersonRegistration = apps.get_model('dashboard', 'PersonRegistration')
 
 # Create engine for connecting to MySQL
-engine = create_engine("mysql+pymysql://root:gil12345@localhost:3306/march")
+# engine = create_engine("mysql+pymysql://root:gil12345@localhost:3306/march")
+engine = create_engine("mysql+pymysql://root:Kor%40spond1@localhost:3306/face_full")
 
 # Fetch data from MySQL
 face_coding_query = "SELECT * FROM person_attend"

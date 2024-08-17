@@ -23,18 +23,41 @@ class EmployeeDetailView(TemplateView):
 
     def get(self, request, pk):
         employee = get_object_or_404(PersonRegistration, pk=pk)
+        all_employees = PersonRegistration.objects.all().values('id', 'full_name')
+
+
+        # Get all employees and paginate
         record = PersonAttend.objects.filter(person=employee).all()
-        all_employees= PersonRegistration.objects.all()
+        paginator = Paginator(record, 10)  # Show 10 employees per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
         context = {
             "employee": employee,
-            "record":record,
-            "all_employees":all_employees,
-            "details_url": reverse("employee_detail", args=[pk]),
-            "template_gallery_url": reverse("template_gallery", args=[pk]),
-            "edit_profile_url": reverse("edit_profile", args=[pk]),
-            "delete_profile_url": reverse("delete_profile", args=[pk]),
+            "record": page_obj, 
+            "all_employees": all_employees,  # Pass the paginated page object to the context
         }
         return render(request, self.template_name, context)
+
+# class EmployeeDetailView(TemplateView):
+#     template_name = "details/employee_detail.html"
+
+#     def get(self, request, pk):
+#         employee = get_object_or_404(PersonRegistration, pk=pk)
+#         record = PersonAttend.objects.filter(person=employee).all()
+#         all_employees= PersonRegistration.objects.all()
+#         context = {
+#             "employee": employee,
+#             "record":record,
+#             "all_employees":all_employees,
+#             # "details_url": reverse("employee_detail", args=[pk]),
+#             # "template_gallery_url": reverse("template_gallery", args=[pk]),
+#             # "edit_profile_url": reverse("edit_profile", args=[pk]),
+#             # "delete_profile_url": reverse("delete_profile", args=[pk]),
+#         }
+#         return render(request, self.template_name, context)
+    
+
 class TemplateGalleryView(TemplateView):
     template_name = "details/template_gallery.html"
 

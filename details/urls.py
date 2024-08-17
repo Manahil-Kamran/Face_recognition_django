@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from .views import *
+from .api import *
+
 urlpatterns = [
     path("details", Employees_Details.as_view(), name="details"),
     path('actions/', Actions_View.as_view(), name='actions_view'),
@@ -9,6 +11,12 @@ urlpatterns = [
     path('employee/<int:pk>/edit/', EditProfileView.as_view(), name='edit_profile'),
     path('employee/<int:pk>/delete/', DeleteProfileView.as_view(), name='delete_profile'),
     path('employee/delete/<int:pk>', DeleteEmployeeRecord.as_view(), name='employee_delete_record'),
+
+
+
+    # apis urls
+    path('employee-search-api/', employee_search_api, name='employee-search-api'),
+
 ]
  
 # from django.contrib import admin
