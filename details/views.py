@@ -1,11 +1,16 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import TemplateView, View
-from dashboard.models import PersonRegistration, PersonAttend
+from dashboard.models import PersonRegistration, PersonAttend, FaceCoding
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.views.generic.edit import UpdateView
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import TemplateView
+from django.core.paginator import Paginator
 
 
 class Employees_Details(TemplateView):
@@ -17,11 +22,6 @@ class Employees_Details(TemplateView):
         page_number = request.GET.get('page')
         pr = paginator.get_page(page_number)
         return render(request, self.template_name, {"pr": pr})
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.shortcuts import get_object_or_404, render
-from django.views.generic import TemplateView
-from django.core.paginator import Paginator
 
 class EmployeeDetailView(TemplateView):
     template_name = "details/employee_detail.html"
@@ -57,7 +57,7 @@ class EmployeeDetailView(TemplateView):
         return self.get(request, pk)
 
 
-# class EmployeeDetailView(TemplateView):
+# class ChangeCurrent(TemplateView):
 #     template_name = "details/employee_detail.html"
 
 #     def get(self, request, pk):
@@ -81,7 +81,18 @@ class TemplateGalleryView(TemplateView):
 
     def get(self, request, pk):
         employee = get_object_or_404(PersonRegistration, pk=pk)
-        return render(request, self.template_name, {"employee": employee})
+        record = FaceCoding.objects.filter(person=employee)
+        paginator = Paginator(record, 10)  # Show 10 employees per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, self.template_name, {"employee": employee,"record":page_obj})
+    
+    def post(self,request,pk):
+        p_id = request.POST.get("p_id")
+        FaceCoding.objects.filter(is_current=True).update(is_current=False)
+        FaceCoding.objects.filter(id=p_id).update(is_current=True)
+        return self.get(request, pk)
+
 
 class EditProfileView(TemplateView):
     template_name = "details/edit_profile.html"

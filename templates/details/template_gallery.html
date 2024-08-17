@@ -1,5 +1,63 @@
 {% extends '../base.html' %}
 {% load static %}
-
+{% load url_tags %}
 {% block content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <!-- Page header and Employee Information goes here -->
+
+        <div class="row">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Employees Gallery</h4>
+                  <div class="table-responsive">
+                    <table class="table" style="table-layout: fixed; width: 100%;">
+                      <thead>
+                        <tr>
+                          <th style="width: 30%;">Images</th>
+                          <th style="width: 30%;">Time sent</th>
+                          <th style="width: 40%;">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in record %}
+                        <tr data-id="{{ p.id }}">
+                            
+                            <td>
+                                {% get_face_image_url p as img_url %}
+                                {% if img_url %}
+                                    <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="selectable-img">
+                                {% else %}
+                                    <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="selectable-img">
+                                {% endif %}
+                            </td>
+                            <td>{{ p.time_sent }}</td>
+                            <td>
+                                <div class="button-container">
+                                    <form action="{% url 'template_gallery' employee.id %}" method="post" style="display:inline;" onsubmit="confirmDelete(event)">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="p_id" value="{{p.id}}">
+                                        <button type="submit" class="btn btn-gradient-primary btn-sm">Change Current</button>
+                                    </form>
+                                    <form action="{% url 'employee_delete_record' p.id %}" method="post" style="display:inline;" onsubmit="confirmDelete(event)">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger">Delete Profile</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- Include the pagination template and pass the page_obj -->
+                  {% include 'pagination.html' with page_obj=record %}
+                </div>
+              </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
 {% endblock %}

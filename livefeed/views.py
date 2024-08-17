@@ -26,7 +26,7 @@ class LiveFeedIn(TemplateView):
         paginator_unknowns = Paginator(unknowns, 10)  # Show 10 employees per page
         page_number_unknowns = request.GET.get('unknowns_page')
         unknowns = paginator_unknowns.get_page(page_number_unknowns)
-        print(len(unknowns))
+        
         
         return render(request, self.template_name, {"knowns": knowns, "unknowns": unknowns})
     
@@ -49,7 +49,7 @@ class LiveFeedOut(TemplateView):
         paginator_unknowns = Paginator(unknowns, 10)  # Show 10 employees per page
         page_number_unknowns = request.GET.get('unknowns_page')
         unknowns = paginator_unknowns.get_page(page_number_unknowns)
-        print(len(unknowns))
+        
         
         return render(request, self.template_name, {"knowns": knowns, "unknowns": unknowns})
 
