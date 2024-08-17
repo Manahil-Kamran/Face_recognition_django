@@ -17,6 +17,11 @@ class Employees_Details(TemplateView):
         page_number = request.GET.get('page')
         pr = paginator.get_page(page_number)
         return render(request, self.template_name, {"pr": pr})
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import TemplateView
+from django.core.paginator import Paginator
 
 class EmployeeDetailView(TemplateView):
     template_name = "details/employee_detail.html"
@@ -24,7 +29,6 @@ class EmployeeDetailView(TemplateView):
     def get(self, request, pk):
         employee = get_object_or_404(PersonRegistration, pk=pk)
         all_employees = PersonRegistration.objects.all().values('id', 'full_name')
-
 
         # Get all employees and paginate
         record = PersonAttend.objects.filter(person=employee).all()
@@ -38,6 +42,20 @@ class EmployeeDetailView(TemplateView):
             "all_employees": all_employees,  # Pass the paginated page object to the context
         }
         return render(request, self.template_name, context)
+    
+    def post(self, request, pk):
+        selected_ids = request.POST.getlist('selected_ids')
+        selected_employee = request.POST.get('selected_employee')
+
+        if selected_ids and selected_employee:
+            for id in selected_ids:
+                PersonAttend.objects.filter(id=id).update(person_id=selected_employee)
+            # After processing, redirect to the same page
+            return HttpResponseRedirect(reverse('employee_detail', args=[pk]))
+
+        # If validation fails, render the form again with an error message
+        return self.get(request, pk)
+
 
 # class EmployeeDetailView(TemplateView):
 #     template_name = "details/employee_detail.html"
@@ -110,3 +128,5 @@ class Actions_View(TemplateView):
         # Add any context data you need to pass to the actions.html template
         context = {}
         return render(request, self.template_name, context)
+
+

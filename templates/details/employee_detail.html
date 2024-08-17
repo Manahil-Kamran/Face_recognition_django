@@ -8,66 +8,12 @@
 </style>
 
 {% block content %}
-<!-- partial -->
 <div class="main-panel">
     <div class="content-wrapper">
-        <div class="page-header">
-            <h3 class="page-title">
-                <span class="page-title-icon bg-gradient-primary text-white me-2">
-                    <i class="mdi mdi-home"></i>
-                </span> Employee Details
-            </h3>
-            <nav aria-label="breadcrumb">
-                <ul class="breadcrumb">
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="row">
-            <div class="col-md-12 stretch-card grid-margin">
-                <div class="card bg-gradient-info card-img-holder text-white">
+        <!-- Page header and Employee Information goes here -->
 
-                    <div class="card-body">
-                  
-                      <h4 class="font-weight-normal mb-3">Employee Information</h4>
-                  
-                      <div class="row">
-                  
-                        <div class="col-md-8">
-                  
-                          <p><strong>Name:</strong> {{ employee.full_name }}</p>
-                  
-                          <p><strong>Department:</strong> {{ employee.department_name }}</p>
-                  
-                        </div>
-                  
-                        <div class="col-md-4 text-right">
-                  
-                          {% get_face_image_url employee as img_url %}
-                  
-                          {% if img_url %}
-                  
-                            <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="img-fluid">
-                  
-                          {% else %}
-                  
-                            <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="img-fluid">
-                  
-                          {% endif %}
-                  
-                        </div>
-                  
-                      </div>
-                  
-                    </div>
-                  
-                  </div>
-            </div>
-        </div>
         <div class="row">
-            <div class="col-12 ">
+            <div class="col-12">
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Registered Employees</h4>
@@ -76,12 +22,11 @@
                       <thead>
                         <tr>
                           <th style="width: 20%;">Select</th>
-                          <th style="width: 20%;"> Picture </th>
-                          <th style="width: 10%;"> Name </th>
-                          <th style="width: 20%;"> Camera </th>
-                          <th style="width: 30%;"> Time Sent </th>
-                      
-                          <th style="width: 20%;"> Actions </th>
+                          <th style="width: 20%;">Picture</th>
+                          <th style="width: 10%;">Name</th>
+                          <th style="width: 20%;">Camera</th>
+                          <th style="width: 30%;">Time Sent</th>
+                          <th style="width: 20%;">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -112,7 +57,7 @@
                             </td>
                         </tr>
                         {% endfor %}
-                    </tbody>
+                      </tbody>
                     </table>
                   </div>
                   <!-- Include the pagination template and pass the page_obj -->
@@ -120,8 +65,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row my-3 mx-1">
+        </div>
+        <div class="row my-3 mx-1">
             <div class="col-8 d-flex align-items-center">
                 <div class="w-100">
                     <label for="exampleFormControlSelect1" class="font-weight-bold h4">Select Employees</label>
@@ -130,11 +75,10 @@
                     </select>
                 </div>
                 <div class="ml-auto">
-                    <button class="btn btn-gradient-primary btn-sm mt-4 mx-1">Update profile</button>
+                    <button class="btn btn-gradient-primary btn-sm mt-4 mx-1" id="update-profile-btn">Update profile</button>
                 </div>
             </div>
         </div>
-        
     </div>
 </div>
 
@@ -171,66 +115,86 @@
         if (repo.loading) {
             return repo.text;
         }
-
-        var markup =  repo.full_name ;
-
-        return markup;
+        return repo.full_name;
     }
 
     function formatRepoSelection (repo) {
         return repo.full_name || repo.text;
     }
-</script>
 
-<script>
     document.addEventListener('DOMContentLoaded', function() {
         const checkboxes = document.querySelectorAll('tbody .select-checkbox');
         const imgs = document.querySelectorAll('tbody .selectable-img');
 
-        // Handle checkbox selection
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 const row = this.closest('tr');
-                if (this.checked) {
-                    row.classList.add('selected');
-                } else {
-                    row.classList.remove('selected');
-                }
+                row.classList.toggle('selected', this.checked);
             });
         });
 
-        // Handle image clicks
         imgs.forEach(img => {
             img.addEventListener('click', function(event) {
-                event.stopPropagation(); // Prevent the click from propagating to the row
-
-                // Get the checkbox of the clicked image
+                event.stopPropagation();
                 const checkbox = this.closest('tr').querySelector('.select-checkbox');
-
-                // Toggle the checkbox
                 checkbox.checked = !checkbox.checked;
-
-                // Trigger the change event for the checkbox
                 checkbox.dispatchEvent(new Event('change'));
             });
         });
 
-        // Function to get selected IDs
+        // Button click handler
+        document.getElementById('update-profile-btn').addEventListener('click', function(event) {
+            const selectedIds = getSelectedIds();
+            const selectedEmployee = $('#employee-select').val();
+
+            if (selectedIds.length === 0) {
+                alert('Please select at least one row.');
+                return;
+            }
+
+            if (!selectedEmployee) {
+                alert('Please select an employee.');
+                return;
+            }
+
+            // Create a form dynamically
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "employee_detail" pk=employee.id %}';  // Use employee.id for dynamic URL
+
+            // Add CSRF token
+            const csrfToken = '{{ csrf_token }}';
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
+            form.appendChild(csrfInput);
+
+            // Add selected IDs to form
+            selectedIds.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'selected_ids';
+                input.value = id;
+                form.appendChild(input);
+            });
+
+            // Add selected employee ID to form
+            const employeeInput = document.createElement('input');
+            employeeInput.type = 'hidden';
+            employeeInput.name = 'selected_employee';
+            employeeInput.value = selectedEmployee;
+            form.appendChild(employeeInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+
         function getSelectedIds() {
             const selectedCheckboxes = document.querySelectorAll('tbody .select-checkbox:checked');
-            const ids = Array.from(selectedCheckboxes).map(checkbox => checkbox.getAttribute('data-id'));
-            return ids;
+            return Array.from(selectedCheckboxes).map(checkbox => checkbox.getAttribute('data-id'));
         }
-
-        // Example usage: Log selected IDs to the console
-        document.getElementById('get-selected-ids').addEventListener('click', function() {
-            const selectedIds = getSelectedIds();
-            console.log('Selected IDs:', selectedIds);
-        });
     });
 </script>
-
-<!-- Button to trigger getting selected IDs (for example purposes)
-<button id="get-selected-ids">Get Selected IDs</button> -->
 
 {% endblock %}
