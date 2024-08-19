@@ -25,12 +25,11 @@
                         <tr data-id="{{ p.id }}">
                             
                             <td>
-                                {% get_face_image_url p as img_url %}
-                                {% if img_url %}
-                                    <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="selectable-img">
-                                {% else %}
-                                    <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="selectable-img">
-                                {% endif %}
+                                
+                              <img src="/media/camera_img/{{p.img_url}}" alt="{{p.img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+
+                               
+                             
                             </td>
                             <td>{{ p.time_sent }}</td>
                             <td>

@@ -326,9 +326,7 @@
                               <td>
                                 {% get_face_image_url p as img_url %}
                                 {% if img_url %}
-                                    <img src="{{img_url}}" alt="Employee Picture" width="220" height="220">
-                                {% else %}
-                                    <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220">
+                                <img src="/media/camera_img/{{img_url}}" alt="{{img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
                                 {% endif %}
                               </td>
                               <!-- <td><img src="{% static '1.jpg' %}" alt="Employee Picture" width="220" height="220"></td> -->

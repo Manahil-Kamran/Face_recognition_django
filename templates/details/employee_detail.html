@@ -21,10 +21,11 @@
                     <table class="table" style="table-layout: fixed; width: 100%;">
                       <thead>
                         <tr>
-                          <th style="width: 20%;">Select</th>
+                          <th style="width: 10%;">Select</th>
                           <th style="width: 20%;">Picture</th>
-                          <th style="width: 10%;">Name</th>
-                          <th style="width: 20%;">Camera</th>
+                          <th style="width: 10%;">Picture id</th>
+                    
+                          <th style="width: 10%;">Camera</th>
                           <th style="width: 30%;">Time Sent</th>
                           <th style="width: 20%;">Actions</th>
                         </tr>
@@ -36,22 +37,21 @@
                                 <input type="checkbox" class="select-checkbox" data-id="{{ p.id }}">
                             </td>
                             <td>
-                                {% get_face_image_url p as img_url %}
-                                {% if img_url %}
-                                    <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="selectable-img">
-                                {% else %}
-                                    <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="selectable-img">
-                                {% endif %}
+                            
+                                
+                                    
+                                    <img src="/media/attend_img/{{p.img_url}}" alt="{{p.img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+                              
                             </td>
-                            <td>{{ p.person.full_name }}</td>
-                            <td>{{ p.camera_id }}{{p.id}}</td>
+                            <td>{{ p.id}}</td>
+                            <td>{{ p.camera_id }}</td>
                             <td>{{ p.time_sent }}</td>
                             <td>
                                 <div class="button-container">
-                                    <a class="btn btn-gradient-primary btn-sm" href="{% url 'edit_profile' p.id %}">Move Record</a>
+                                   
                                     <form action="{% url 'employee_delete_record' p.id %}" method="post" style="display:inline;" onsubmit="confirmDelete(event)">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-danger">Delete Profile</button>
+                                        <button type="submit" class="btn btn-outline-danger">Delete Record</button>
                                     </form>
                                 </div>
                             </td>

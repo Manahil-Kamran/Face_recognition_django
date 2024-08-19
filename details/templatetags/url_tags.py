@@ -14,7 +14,7 @@ def get_face_image_url(person):
         print("face coding",face_coding.img_url
               )
         if face_coding and face_coding.img_url:
-            return face_coding.img_url.url
+            return face_coding.img_url
         return None
     except Exception as e:
         # Log the error or handle it as needed

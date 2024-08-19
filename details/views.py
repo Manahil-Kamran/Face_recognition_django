@@ -89,7 +89,7 @@ class TemplateGalleryView(TemplateView):
     
     def post(self,request,pk):
         p_id = request.POST.get("p_id")
-        FaceCoding.objects.filter(is_current=True).update(is_current=False)
+        FaceCoding.objects.filter(id=pk,is_current=True).update(is_current=False)
         FaceCoding.objects.filter(id=p_id).update(is_current=True)
         return self.get(request, pk)
 
