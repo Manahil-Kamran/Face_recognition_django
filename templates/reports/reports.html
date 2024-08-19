@@ -1,6 +1,21 @@
 {% extends '../base.html'%}
 {% load static %}
 {% load url_tags %}
+<style>
+  td img {
+    display: block; /* Ensures the image does not sit inline with text */
+    margin-bottom: 10px; /* Space below the image */
+}
+
+td div {
+    margin-bottom: 5px; /* Space between the text elements */
+}
+
+td button {
+    margin-top: 10px; /* Space above the button */
+}
+
+</style>
   {% block content %}
         <!-- partial -->
         <div class="main-panel">
@@ -41,16 +56,21 @@
                               {% for p in record %}
                               <tr data-id="{{ p.id }}">
                                   
-                                  <td>
-                                      {% get_face_image_url p as img_url %}
-                                      {% if img_url %}
-                                          <img src="{{img_url}}" alt="Employee Picture" width="220" height="220" class="selectable-img">
-                                      {% else %}
-                                          <img src="{% static 'default.jpg' %}" alt="Default Picture" width="220" height="220" class="selectable-img">
-                                      {% endif %}
-                                  </td>
-                                  <td>{{ p.person.full_name }}</td>
-                                  <td>{{ p.time_sent }}</td>
+                                <td>
+                                    <img src="/media/attend_img/{{p.first.img_url}}" alt="{{p.first.img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+                                  <div>{{ p.first.camera_id }}</div>
+                                  <div>{{ p.first.time_sent }}</div>
+                                  <button>Edit</button>
+                              </td>
+                              <td>
+                                  <img src="/media/attend_img/{{p.last.img_url}}" alt="{{p.last.img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+                                <div>{{ p.last.camera_id }}</div>
+                                <div>{{ p.last.time_sent }}</div>
+                                <button>Edit</button>
+                              </td>
+                              
+                                  <td>{{ p.full_name }}</td>
+                                  
                                   <td>
                                       <div class="button-container">
                                           <a class="btn btn-gradient-primary btn-sm" href="{% url 'edit_profile' p.id %}">Move Record</a>
