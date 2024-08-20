@@ -74,10 +74,11 @@
                     <th>Picture</th>
                     <th>ID</th>
                     <th>Visitor Name</th>
-                    <th>Department</th>
-                    <th>Status</th>
+                    <th>Camera ID</th>
                     <th>Time Stamp</th>
                     <th>Similarity Index</th>
+                    <th>Action</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -88,10 +89,15 @@
                     <td>{{ visitor.id }}</td>
                     <td>{{ visitor.person.full_name }}</td>
                     <td>{{ visitor.person.department_name }}</td>
-                    <td>
-                      <label class="badge badge-gradient-{{ visitor.status|lower }}">{{ visitor.status }}</label>
-                    </td>
+                    
                     <td>{{ visitor.time_sent }}</td>
+                    <td>index</td>
+                    <td>
+                      <div class="button-container">
+                        <a class="btn btn-gradient-primary btn-sm" href="{% url 'New_Employee_Registration' visitor.id %}">New Register</a>
+                        <a class="btn btn-gradient-primary btn-sm" href="{% url 'template_gallery' visitor.id %}">Move Record</a>
+                    </div>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>

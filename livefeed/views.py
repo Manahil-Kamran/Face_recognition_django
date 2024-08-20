@@ -19,12 +19,12 @@ class LiveFeedIn(TemplateView):
         
         # Paginate knowns
         paginator_knowns = Paginator(knowns, 10)  # Show 10 employees per page
-        page_number_knowns = request.GET.get('knowns_page')
+        page_number_knowns = request.GET.get('page')
         knowns = paginator_knowns.get_page(page_number_knowns)
         
         # Paginate unknowns
         paginator_unknowns = Paginator(unknowns, 10)  # Show 10 employees per page
-        page_number_unknowns = request.GET.get('unknowns_page')
+        page_number_unknowns = request.GET.get('page')
         unknowns = paginator_unknowns.get_page(page_number_unknowns)
         
         
