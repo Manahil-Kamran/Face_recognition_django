@@ -73,10 +73,11 @@
                     <th>Picture</th>
                     <th>ID</th>
                     <th>Visitor Name</th>
-                    <th>Department</th>
-                    <th>Status</th>
+                    <th>Camera ID</th>
                     <th>Time Stamp</th>
                     <th>Similarity Index</th>
+                    <th>Action</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -90,10 +91,15 @@
                     <td>{{ visitor.id }}</td>
                     <td>{{ visitor.person.full_name }}</td>
                     <td>{{ visitor.person.department_name }}</td>
-                    <td>
-                      Present
-                    </td>
+                    
                     <td>{{ visitor.time_sent }}</td>
+                    <td>index</td>
+                    <td>
+                      <div class="button-container">
+                        <a class="btn btn-gradient-primary btn-sm" href="{% url 'New_Employee_Registration' visitor.id %}">New Register</a>
+                        <a class="btn btn-gradient-primary btn-sm" href="{% url 'template_gallery' visitor.id %}">Move Record</a>
+                    </div>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -107,30 +113,18 @@
     </div>
     <div class="row">
       <div class="col-lg-5 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body p-0 d-flex">
-            <div id="inline-datepicker" class="datepicker datepicker-custom"></div>
-          </div>
-        </div>
+        <a href="{% url 'delete_all_unknows' %}?camera_id={{ 'P&D'|urlencode }}" class="btn btn-gradient-primary" onclick="return confirmDelete();">Delete All unknowns</a>
+
+<script>
+function confirmDelete() {
+    return confirm("Are you sure you want to delete all unknowns?");
+}
+</script>
+
+
+            
       </div>
-      <div class="col-md-4 grid-margin">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">Recent Visitors</h4>
-            <ul class="list-unstyled">
-              {% for visitor in recent_visitors %}
-              <li class="d-flex align-items-center mb-4">
-                <img src="{% static 'images/faces/admin.jpg' %}" class="me-3" alt="image">
-                <div>
-                  <h5>{{ visitor.name }}</h5>
-                  <p class="text-muted">{{ visitor.department }}</p>
-                </div>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </div>
   <!-- content-wrapper ends -->

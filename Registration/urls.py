@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path,include
-from .views import Registration
+from .views import NewEmployeeRegister
 
 urlpatterns = [
-    path("register/", Registration, name="New_Employee_Registration"),
+    path("register/<int:pk>", NewEmployeeRegister.as_view(), name="New_Employee_Registration"),
 ]
     
