@@ -31,7 +31,7 @@
                     <th>Department</th>
                     <th>Status</th>
                     <th>Time Stamp</th>
-                    <th>Similarity Index</th>
+                    <th>Similarity Index</th> <!-- Added column for Similarity Index -->
                   </tr>
                 </thead>
                 <tbody>
@@ -39,21 +39,22 @@
                   {% for p in knowns %}
                   <tr>
                     <td>
-                    
-                          
-                          <img src="/media/attend_img/{{p.img_url}}" alt="{{p.img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
-                      
+                      <img src="/media/attend_img/{{p.img_url}}" alt="{{p.img_url}}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 0;">
+                    </td>
                     <td>{{ p.id }}</td>
                     <td>{{ p.person.full_name }}</td>
                     <td>{{ p.person.department_name}}</td>
-                    <td>
-                      Present
-                    </td>
+                    <td>Present</td>
                     <td>{{ p.time_sent }}</td>
+                    <td>
+                      <!-- Dummy button for Similarity Index -->
+                      <button type="button" class="btn btn-primary btn-sm">Similarity</button>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
+              
             </div>
             <!-- Include the pagination template and pass the page_obj -->
             {% include 'pagination.html' with page_obj=knowns %}
@@ -93,7 +94,8 @@
                     <td>{{ visitor.person.department_name }}</td>
                     
                     <td>{{ visitor.time_sent }}</td>
-                    <td>index</td>
+                    <td><!-- Dummy button for Similarity Index -->
+                      <button type="button" class="btn btn-primary btn-sm">Similarity</button></td>
                     <td>
                       <div class="button-container">
                         <a class="btn btn-gradient-primary btn-sm" href="{% url 'New_Employee_Registration' visitor.id %}">New Register</a>

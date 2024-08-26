@@ -74,39 +74,62 @@ for employee_id in os.listdir(dataset_path):
         if image is None:
             print(f"Failed to load image {img_path}")
             continue
-        (h, w) = image.shape[:2]
-
-        # Prepare the image for face detection
-        blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), (104.0, 177.0, 123.0))
+        small_frame = cv2.resize(image, (0, 0), fx=0.65, fy=0.65, interpolation=cv2.INTER_AREA)
+        origin_h, origin_w = small_frame.shape[:2]
+        blob = cv2.dnn.blobFromImage(small_frame)
         net.setInput(blob)
         detections = net.forward()
 
-        # Loop over the detections
-        for i in range(detections.shape[2]):
+        face_locations = []
+        face_encodings = []
+        face_names = []
+
+        for i in range(0, detections.shape[2]):
             confidence = detections[0, 0, i, 2]
+            if confidence > 0.5:
+                bounding_box = detections[0, 0, i, 3:7] * np.array([origin_w, origin_h, origin_w, origin_h])
+                left, top, right, bottom = bounding_box.astype('int')
+                face_frame = np.ascontiguousarray(image[max(0, top-60):min(origin_h, bottom+60), max(0, left-60):min(origin_w, right+60)])
+                
+                pil_img = Image.fromarray(face_frame)
+                transformed_img = make_transform(is_train=False)(pil_img).unsqueeze(0)  # Apply transformation
+
+                # Extract embeddings from the model
+                embedding = model(transformed_img).detach().cpu().numpy()[0]
+
+            # (h, w) = image.shape[:2]
+
+            # Prepare the image for face detection
+        #     blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), (104.0, 177.0, 123.0))
+        #     net.setInput(blob)
+        #     detections = net.forward()
+
+        # # Loop over the detections
+        # for i in range(detections.shape[2]):
+        #     confidence = detections[0, 0, i, 2]
             
-            if confidence > 0.5:  # Filter out weak detections
-                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-                (startX, startY, endX, endY) = box.astype("int")
+        #     if confidence > 0.5:  # Filter out weak detections
+        #         box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+        #         (startX, startY, endX, endY) = box.astype("int")
 
-                # Extract the detected face ROI
-                face = image[startY:endY, startX:endX]
+        #         # Extract the detected face ROI
+        #         face = image[startY:endY, startX:endX]
 
-                # Convert the face ROI to RGB and then to a PIL Image
-                face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
-                face = Image.fromarray(face)
+        #         # Convert the face ROI to RGB and then to a PIL Image
+        #         face = cv2.cvtColor(face, cv2.COLOR_BGR2RGB)
+        #         face = Image.fromarray(face)
 
-                # Apply the necessary transformations to the face
-                transform = make_transform()
-                face = transform(face)
+        #         # Apply the necessary transformations to the face
+        #         transform = make_transform()
+        #         face = transform(face)
 
-                # Add a batch dimension and move the tensor to the CPU
-                face = face.unsqueeze(0)
-                face = face.to(torch.device("cpu"))
+        #         # Add a batch dimension and move the tensor to the CPU
+        #         face = face.unsqueeze(0)
+        #         face = face.to(torch.device("cpu"))
 
-                # Perform face embedding extraction
-                with torch.no_grad():
-                    embedding = model(face).cpu().numpy().flatten()  # Flatten the embedding
+        #         # Perform face embedding extraction
+        #         with torch.no_grad():
+        #             embedding = model(face).cpu().numpy().flatten()  # Flatten the embedding
 
                 # Fetch the person object (foreign key) from PersonRegistration
                 try:

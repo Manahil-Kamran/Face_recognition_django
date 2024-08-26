@@ -10,7 +10,7 @@ from collections import deque, Counter
 import queue
 from datetime import datetime
 import cv2 
-
+import base64
 import socketio
 from imutils.video import VideoStream
 from imutils.video import FPS
@@ -25,8 +25,9 @@ from collections import deque
 import torch
 from my_utils.base import Resnet50
 from my_utils.transform import make_transform
-import face_recognition
+
 from PIL import Image
+import ast
 from collections import deque, Counter
 
 
@@ -43,7 +44,7 @@ print("model loaded")
 
 
 
-base_url = "http://127.0.0.1:8009/"
+base_url = "http://127.0.0.1:8000/"
 file_path = os.path.dirname(os.path.abspath(__file__)) + os.sep
 
 def response(host):
@@ -67,7 +68,7 @@ def get_last_id_of_person():
 
 
 def get_all_knn():
-    URL = base_url + "api/get_face_codings_testknn/"
+    URL = base_url + "dashboard/api/get_face_codings_testknn"
 
     with urllib.request.urlopen(URL) as url:
         data = json.loads(url.read().decode())
@@ -95,36 +96,33 @@ person_names, known_face_encodings, ids_for_person_ids, knn_id_n = get_all_knn()
 def minkowski_distance(a, b, p):
     return np.power(np.sum(np.abs(np.array(a) - np.array(b))**p), 1/p)
 
-def knn_classifier(unknown_encodings, known_face_encodings, ids_for_person_ids, k=3, p=2, threshold=0.6):
-    distances = np.array([minkowski_distance(unknown_encodings, encoding, p) for encoding in known_face_encodings])
-    
+def knn_classifier(unknown_encodings, known_face_encodings, ids_for_person_ids, k=3, p=2, threshold=0.5):
+    distances = np.array([minkowski_distance(unknown_encodings, ast.literal_eval(encoding), p) for encoding in known_face_encodings])
+    print(distances)
     filtered_indices = np.where(distances < threshold)
-    filtered_distances = distances[filtered_indices]
+    filtered_distances = distances
+    [filtered_indices]    
     if filtered_distances.any():
-        try: 
+        try:
             closest_indices = np.argpartition(filtered_distances, k)[:k]
             closest_person_ids = [ids_for_person_ids[i] for i in filtered_indices[0][closest_indices]]
-            closest_distances = filtered_distances[closest_indices]
             person_id_counts = Counter(closest_person_ids)
-            most_common_person_id, most_common_count = person_id_counts.most_common(1)[0]
-
-            return most_common_person_id, closest_distances, filtered_distances
-
+            most_common_person_id, _ = person_id_counts.most_common(1)[0]
+            print(most_common_person_id, "try condition")
+           
+            return most_common_person_id, filtered_distances[closest_indices]
         except:
             closest_indices = np.argpartition(distances, k)[:k]
             closest_person_ids = [ids_for_person_ids[i] for i in closest_indices]
-            closest_distances = [distances[i] for i in closest_indices]
-
             person_id_counts = Counter(closest_person_ids)
-            most_common_person_id, most_common_count = person_id_counts.most_common(1)[0]
-
-        if most_common_count >= k:
-            return most_common_person_id, closest_distances, filtered_distances
-        else:
-            return 'unknown', 0, 0
+            most_common_person_id, _ = person_id_counts.most_common(1)[0]
+            print(most_common_person_id, "except6 condition")
+            
+            return most_common_person_id, distances[closest_indices]
     else:
-        return 'unknown', 0, 0
+        return 'unknown', 0
 
+  
 thresholdfordetection = 0.5  
 
 prototxt_file = file_path + 'Resnet_SSD_deploy.prototxt'
@@ -162,8 +160,6 @@ def connect():
     thread_index = 0
     res = 0
     while res == 0:
-
-
         _,frame = cap.read()
         if frame is not None:    
 
@@ -182,47 +178,19 @@ def connect():
             for i in range(0, detections.shape[2]): #5
                 confidence = detections[0, 0, i, 2]
                 if confidence > thresholdfordetection:
-                    bounding_box = detections[0, 0, i, 3:7] * np.array([origin_w, origin_h, origin_w, origin_h])
-                    left, top, right, bottom = bounding_box.astype('int')
                     try:
+                        
+                        bounding_box = detections[0, 0, i, 3:7] * np.array([origin_w, origin_h, origin_w, origin_h])
+                        left, top, right, bottom = bounding_box.astype('int')
+                        face_frame = np.ascontiguousarray(frame[max(0, top-60):min(origin_h, bottom+60), max(0, left-60):min(origin_w, right+60)])
+                        
+                        pil_img = Image.fromarray(face_frame)
+                        transformed_img = make_transform(is_train=False)(pil_img).unsqueeze(0)  # Apply transformation
 
-                        top = int(top/0.65)
-                        right = int(right/0.65) 
-                        bottom = int(bottom/0.65)
-                        left = int(left/0.65)
-                        n = 60
-                        top = top-n
-                        bottom = bottom+n
-                        left = left-n
-                        right = right+n
-                        face_frame = np.ascontiguousarray(frame[top:bottom, left:right])
-                        #_, im_buf_arr = cv.imencode(".jpg", face_frame)
-                        #byte_im = im_buf_arr.tobytes()
-                        #data = recognition.recognize(byte_im, options={'face_plugins':'calculator'})
-                       # embeddings = data.get('result')[0]['embedding']
-                        #image = cv2.imread(image_path)
+                        # Extract embeddings from the model
+                        embeddings = model(transformed_img).detach().cpu().numpy()[0]
 
-                        image = cv2.cvtColor(face_frame, cv2.COLOR_BGR2RGB)
-
-                        image = Image.fromarray(image)
-
-                        transform = make_transform()
-
-                        image = transform(image)
-
-                        image = image.unsqueeze(0)
-                        image = image.to(torch.device("cpu"))
-
-                        with torch.no_grad():
-                            output = model(image)
-
-                        embeddings = output.cpu().numpy()
-                        embeddings= np.array(embeddings).tolist()
-                      
-
-			# print(len(output[0]))
-			# print(np.array(output).tolist())
-                        predicted_class, closest_distances, filtered_distances = knn_classifier(embeddings, known_face_encodings, ids_for_person_ids, k=3, p=2)
+                        predicted_class, closest_distances = knn_classifier(embeddings, known_face_encodings, ids_for_person_ids, k=3, p=2)
                         print(predicted_class, closest_distances, "helloooo")
                         cv.putText(small_frmae, predicted_class, (15, int(origin_h * 0.92)), cv.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                         cv.imshow('Frame', small_frmae)
@@ -230,6 +198,7 @@ def connect():
                     except Exception as e:
                         print('Error',e)
                     label = None
+                    closest_distances = []
                     incoming_person_name = None
                     
                     if face_frame.any() and len(embeddings) > 0:
@@ -255,12 +224,13 @@ def connect():
                             # blob_fe = fe.tolist()
                             if name=="unknown":
                                 result, img_encoded = cv.imencode('.jpg', face_frame, encode_param)
-                                img_data = pickle.dumps(img_encoded, 0)                
+                                img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
+                                               
                                 name_n = 'unknown--'+ str(get_last_id_of_person())+"-" + str(thread_index)
                                 meta_data = {'full_name': str(name_n), 'department_name': dep_name\
                                 , "face_feature": str(fe),  "blob_face_feature": fe, }
-                                my_img = {'image':img_data, 'json_data':meta_data}
-                                sio.emit('posting',my_img) 
+                                my_img = { 'json_data':meta_data}
+                                sio.emit('posting',img_encoded_str) 
                                 name = 'unknown--'+ str(get_last_id_of_person())
                             
                             if name in list(record_person.keys()):
@@ -270,24 +240,28 @@ def connect():
                                     record_person[name] = time.time()
                                     if name in person_names:
                                         result, img_encoded = cv.imencode('.jpg', face_frame, encode_param)
-                                        img_data = pickle.dumps(img_encoded, 0)
+                                        img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
+
+                                        # img_data = pickle.dumps(img_encoded, 0)
                                         from datetime import datetime
                                         now = datetime.now()                    
                                         meta_data = {'person_id': ids_for_person_ids[person_names.index(name)], 'camera_id': dep_name,
                                         "time_sent": str(now), "face_feature": str(fe),  "blob_face_feature": fe }
-                                        my_img1 = {'image':img_data,'json_data':meta_data}
+                                        my_img1 = {'json_data':meta_data}
                                         sio.emit('attend',my_img1)
                             else:
                                 record_person[name] = time.time()
                                 if name in person_names:
+                                    import base64
                                     result, img_encoded = cv.imencode('.jpg', face_frame, encode_param)
+                                    img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
                                     print(img_encoded, result)
-                                    img_data = pickle.dumps(img_encoded, 0)
+                                    img_data = pickle.dumps(img_encoded_str, 0)
                                     from datetime import datetime
                                     now = datetime.now()
                                     meta_data = {'person_id':  ids_for_person_ids[person_names.index(name)], 'camera_id': dep_name,"time_sent": str(now)\
                                         , "face_feature": str(fe),  "blob_face_feature": fe }
-                                    my_img1 = {'image':img_data,'json_data':meta_data}
+                                    my_img1 = {'json_data':meta_data}
 
                                     sio.emit('attend', my_img1)
         else:
