@@ -35,12 +35,13 @@ sio = socketio.Client()
 q=queue.Queue()
 # Load the custom face recognition model on CPU
 model = Resnet50(embedding_size=512)
-checkpoint = torch.load("detection_models/FR.pth", map_location=torch.device("cuda"))
+checkpoint = torch.load("detection_models/FR.pth", map_location=torch.device("cpu"))
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval() 
-model.to(torch.device("cuda"))
+model.to(torch.device("cpu"))
 print("model loaded")
-
+# os.environ['CUDA_LAUNCH_BLOCKING']="1"
+# os.environ['TORCH_USE_CUDA_DSA'] = "1"
 
 
 base_url = "http://127.0.0.1:8000/"
@@ -148,7 +149,7 @@ def connect():
 
     # time.sleep(1.0)
     # fps = FPS().start()
-    # size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+    # size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
     # out_fps = 30
 
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
@@ -159,130 +160,104 @@ def connect():
     thread_index = 0
     res = 0
     while res == 0:
-        _,frame = cap.read()
-        if frame is not None:    
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to capture image")
+            continue
 
-            thread_index +=1
-            face_locations = []
-            face_embeddings = []
-            face_names = []
-         
-            small_frmae = cv2.resize(frame, (0,0),fx=0.65,fy=0.65, interpolation=cv2.INTER_AREA)
+        if frame is not None:
+            try:
+                thread_index += 1
+                face_locations = []
+                face_embeddings = []
+                face_names = []
 
-            origin_h, origin_w = small_frmae.shape[:2]
-            blob = cv2.dnn.blobFromImage(small_frmae)
-            net.setInput(blob)
-            detections = net.forward()
-            embedding = []
-            for i in range(0, detections.shape[2]): #5
-                confidence = detections[0, 0, i, 2]
-                if confidence > thresholdfordetection:
-                    try:
+                small_frame = cv2.resize(frame, (0, 0), fx=0.65, fy=0.65, interpolation=cv2.INTER_AREA)
+                origin_h, origin_w = small_frame.shape[:2]
+                blob = cv2.dnn.blobFromImage(small_frame)
+                net.setInput(blob)
+                detections = net.forward()
+                embedding = []
+
+                for i in range(0, detections.shape[2]):
+                    confidence = detections[0, 0, i, 2]
+                    if confidence > thresholdfordetection:
+                        try:
+                            bounding_box = detections[0, 0, i, 3:7] * np.array([origin_w, origin_h, origin_w, origin_h])
+                            left, top, right, bottom = bounding_box.astype('int')
+                            face_frame = np.ascontiguousarray(frame[max(0, top-60):min(origin_h, bottom+60), max(0, left-60):min(origin_w, right+60)])
+
+                            pil_img = Image.fromarray(face_frame)
+                            transformed_img = make_transform(is_train=False)(pil_img).unsqueeze(0)
+                            # transformed_img = transformed_img.to(torch.device("cuda"))
+
+                            embeddings = model(transformed_img).detach().cpu().numpy()[0]
+                            predicted_class, closest_distances = knn_classifier(embeddings, known_face_encodings, ids_for_person_ids, k=3, p=2)
+                            cv2.putText(small_frame, predicted_class, (15, int(origin_h * 0.92)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+                        except Exception as e:
+                            print('Error:', e)
                         
-                        bounding_box = detections[0, 0, i, 3:7] * np.array([origin_w, origin_h, origin_w, origin_h])
-                        left, top, right, bottom = bounding_box.astype('int')
-                        face_frame = np.ascontiguousarray(frame[max(0, top-60):min(origin_h, bottom+60), max(0, left-60):min(origin_w, right+60)])
-                        
-                        pil_img = Image.fromarray(face_frame)
-                        transformed_img = make_transform(is_train=False)(pil_img).unsqueeze(0)  # Apply transformation
+                        if face_frame.any() and len(embeddings) > 0:
+                            try:
+                                if closest_distances:
+                                    label = '{0:.2f}%'.format(min(closest_distances) * 100)
+                                else:
+                                    label = 'High'
+                            except:
+                                if len(closest_distances) > 0:
+                                    label = '{0:.2f}%'.format(min(closest_distances) * 100)
+                                else:
+                                    label = 'High'
+                            incoming_person_name = knn_id_n.get(predicted_class, 'unknown')
+                            face_embeddings.append(embeddings)
+                            face_names.append(incoming_person_name)
 
-                        # Extract embeddings from the model
-                        embeddings = model(transformed_img).detach().cpu().numpy()[0]
-
-                        predicted_class, closest_distances = knn_classifier(embeddings, known_face_encodings, ids_for_person_ids, k=3, p=2)
-                        print(predicted_class, closest_distances, "helloooo")
-                        cv2.putText(small_frmae, predicted_class, (15, int(origin_h * 0.92)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-                        cv2.imshow('Frame', small_frmae)
-                        
-                    except Exception as e:
-                        print('Error',e)
-                    label = None
-                    closest_distances = []
-                    incoming_person_name = None
-                    
-                    if face_frame.any() and len(embeddings) > 0:
-                        try: 
-                            if closest_distances != 0:
-                                label = '{0:.2f}%'.format(min(closest_distances) * 100)
-                                print(label)
-                            else:
-                                label = 'High'
-                        except: 
-                            if len(closest_distances) > 0:
-                                label = '{0:.2f}%'.format(min(closest_distances) * 100)
-                            else:
-                                label = 'High'
-                        if predicted_class !='unknown':
-                            incoming_person_name = knn_id_n[predicted_class]
-                        else:
-                            incoming_person_name = 'unknown'
-                        face_embeddings.append(embeddings)
-                        face_names.append(incoming_person_name)
-                        for name, fe, in zip(face_names, face_embeddings):
-                            print(name)
-                            # blob_fe = fe.tolist()
-                            if name=="unknown":
-                                result, img_encoded = cv2.imencode('.jpg', face_frame, encode_param)
-                                img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
-                                               
-                                name_n = 'unknown--'+ str(get_last_id_of_person())+"-" + str(thread_index)
-                                meta_data = {'full_name': str(name_n), 'department_name': dep_name\
-                                , "face_feature": str(fe),  "blob_face_feature": fe, }
-                                my_img = { 'json_data':meta_data}
-                                sio.emit('posting',img_encoded_str) 
-                                name = 'unknown--'+ str(get_last_id_of_person())
-                            
-                            if name in list(record_person.keys()):
-                                if time.time() - record_person[name] > (time_for_wait * 60):
+                            for name, fe in zip(face_names, face_embeddings):
+                                if name == "unknown":
                                     result, img_encoded = cv2.imencode('.jpg', face_frame, encode_param)
-                                    img_data = pickle.dumps(img_encoded, 0)
+                                    img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
+                                    name_n = 'unknown--' + str(get_last_id_of_person()) + "-" + str(thread_index)
+                                    meta_data = {'full_name': str(name_n), 'department_name': dep_name, "face_feature": str(fe), "blob_face_feature": fe.tolist()}
+                                    my_img = {'json_data': meta_data}
+                                    sio.emit('posting', img_encoded_str)
+                                    name = 'unknown--' + str(get_last_id_of_person())
+                                    
+                                if name in record_person:
+                                    if time.time() - record_person[name] > (time_for_wait * 60):
+                                        result, img_encoded = cv2.imencode('.jpg', face_frame, encode_param)
+                                        img_data = pickle.dumps(img_encoded, 0)
+                                        record_person[name] = time.time()
+                                        if name in person_names:
+                                            result, img_encoded = cv2.imencode('.jpg', face_frame, encode_param)
+                                            img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
+                                            now = datetime.now()
+                                            meta_data = {'person_id': ids_for_person_ids[person_names.index(name)], 'camera_id': dep_name, "time_sent": str(now), "face_feature": str(fe), "blob_face_feature": fe.tolist()}
+                                            my_img1 = {'json_data': meta_data}
+                                            sio.emit('attend', my_img1)
+                                else:
                                     record_person[name] = time.time()
                                     if name in person_names:
                                         result, img_encoded = cv2.imencode('.jpg', face_frame, encode_param)
                                         img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
-
-                                        # img_data = pickle.dumps(img_encoded, 0)
-                                        from datetime import datetime
-                                        now = datetime.now()                    
-                                        meta_data = {'person_id': ids_for_person_ids[person_names.index(name)], 'camera_id': dep_name,
-                                        "time_sent": str(now), "face_feature": str(fe),  "blob_face_feature": fe }
-                                        my_img1 = {'json_data':meta_data}
-                                        sio.emit('attend',my_img1)
-                            else:
-                                record_person[name] = time.time()
-                                if name in person_names:
-                                    import base64
-                                    result, img_encoded = cv2.imencode('.jpg', face_frame, encode_param)
-                                    img_encoded_str = base64.b64encode(img_encoded).decode('utf-8')
-                                    print(img_encoded, result)
-                                    img_data = pickle.dumps(img_encoded_str, 0)
-                                    from datetime import datetime
-                                    now = datetime.now()
-                                    meta_data = {'person_id':  ids_for_person_ids[person_names.index(name)], 'camera_id': dep_name,"time_sent": str(now)\
-                                        , "face_feature": str(fe),  "blob_face_feature": fe }
-                                    my_img1 = {'json_data':meta_data}
-
-                                    sio.emit('attend', my_img1)
+                                        now = datetime.now()
+                                        meta_data = {'person_id': ids_for_person_ids[person_names.index(name)], 'camera_id': dep_name, "time_sent": str(now), "face_feature": str(fe), "blob_face_feature": fe.tolist()}
+                                        my_img1 = {'json_data': meta_data}
+                                        sio.emit('attend', my_img1)
+            
+                cv2.imshow('Frame', small_frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            except:
+                pass
         else:
             res = response('ping 192.168.1.64 -c 4')
-            if res ==0:
+            if res == 0:
                 res = 0
-                print("#################################3")
-                # path =  'rtsp://admin:zohaib123@192.168.1.64:554/Streaming/channels/101/'
-                cap = VideoStream(src='rtsp://admin:zohaib123@192.168.1.64:554/Streaming/channels/101/', resolution=(640,480),
-                framerate=13).start()
+                cap = VideoStream(src='rtsp://admin:zohaib123@192.168.1.64:554/Streaming/channels/101/', resolution=(640,480), framerate=13).start()
 
-        #         x_start, y_start, x_end, y_end = bounding_box.astype('int')
+cv2.destroyAllWindows()
 
-        #         cv2.rectangle(small_frmae, (x_start, y_start), (x_end, y_end),(0, 0, 255), 2)
-                    
-        #         cv2.rectangle(small_frmae, (x_start, y_start-18), (x_end, y_start), (0, 0, 255), -1)
-        #             # cv2.putText(small_frmae, label, (x_start+2, y_start-5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        #         cv2.putText(small_frmae, name, (x_start+7, y_start-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        #     fps.update()
-        #     fps.stop()
-            # text = "FPS: {:.2f}".format(fps.fps())
-           
 
   
   

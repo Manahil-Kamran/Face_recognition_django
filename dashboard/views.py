@@ -6,7 +6,7 @@ from .models import *
 
 
 # sio = socketio.Server(async_mode='threading', cors_allowed_origins='*')
-sio = socketio.Server(async_mode='gevent', cors_allowed_origins='*')
+sio = socketio.Server(async_mode='eventlet', cors_allowed_origins='*')
 
 # sio = socketio.Server(async_mode='eventlet', cors_allowed_origins='*')
 # redis_host = 'localhost'  # Redis server host

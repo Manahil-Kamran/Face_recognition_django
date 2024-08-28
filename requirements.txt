@@ -13,4 +13,6 @@ torchvision
 eventlet==0.25.2
 python-engineio
 gunicorn
-eventlet
+imutils
+dnspython==2.2.1
+python-socketio[client]
