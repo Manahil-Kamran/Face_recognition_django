@@ -4,3 +4,13 @@ pytz
 pillow
 psycopg2-binary
 djangorestframework
+imutils
+torch
+opencv-python
+requests
+python-socketio
+torchvision
+eventlet==0.25.2
+python-engineio
+gunicorn
+eventlet
