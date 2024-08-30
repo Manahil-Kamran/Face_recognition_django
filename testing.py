@@ -5,7 +5,7 @@ import cv2
 import random
 from scipy.spatial import distance
 
-dataset_path = "detection_models/images/"
+dataset_path = "/home/devp/dataset"
 
 images_array = []
 ids_array = []
