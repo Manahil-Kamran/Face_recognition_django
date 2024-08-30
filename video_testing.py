@@ -3,7 +3,7 @@ import os
 import numpy as np
 import cv2
 from scipy.spatial import distance
-
+os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 # Load all embeddings from your dataset
 dataset_path = "detection_models/images/"
 
@@ -12,7 +12,14 @@ ids_array = []
 embeddings = []
 
 # Read and process all images to compute embeddings
-model_name = "Facenet"  # Change this to the desired model
+# model_name = "ArcFace"  # Change this to the desired model
+# model_name = "SFace"
+# model_name = "OpenFace"
+# model_name = "Facenet"
+model_name = "DeepID"
+
+
+
 for f in os.listdir(dataset_path):
     folder = os.path.join(dataset_path, f)
     for img in os.listdir(folder):
