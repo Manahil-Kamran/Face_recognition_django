@@ -3,7 +3,7 @@ import os
 import numpy as np
 import cv2
 from scipy.spatial import distance
-os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
+# os.environ['TF_CPP_MIN_LOG_LEVEL']='3'
 # Load all embeddings from your dataset
 dataset_path = "detection_models/images/"
 
@@ -14,9 +14,9 @@ embeddings = []
 # Read and process all images to compute embeddings
 # model_name = "ArcFace"  # Change this to the desired model
 # model_name = "SFace"
-# model_name = "OpenFace"
+model_name = "OpenFace"
 # model_name = "Facenet"
-model_name = "DeepID"
+# model_name = "DeepID"
 
 
 
@@ -91,6 +91,7 @@ while cap.isOpened():
         x, y, w, h = facial_area['x'], facial_area['y'], facial_area['w'], facial_area['h']
         draw_label(frame, (x, y - 10), closest_img_id)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        # cv2.imshow(frame)
 
     # Display the frame
     cv2.imshow('Video', frame)

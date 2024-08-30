@@ -23,7 +23,10 @@ for f in os.listdir(dataset_path):
         images_array.append((img, f))  # Store image with its id
 
 # Choose the model
-model_name = "Facenet"  # Change this to the desired model
+# model_name = "Facenet"  # 1 ,1 , 1 ,1 , 0
+# model_name = "ArcFace"  # 1 , 1 , 1 , 1, 0
+# model_name = "SFace" # 1 ,1, 1, 1 , 1
+model_name = "OpenFace" # 1 ,1 ,1 , 1 , 1
 # print(images_array)
 embeddings = []
 for img, img_id in images_array:
@@ -38,7 +41,7 @@ for img, img_id in images_array:
     embeddings.append((embedding[0]["embedding"], img_id))
 print(embeddings)
 # Pick a random image
-random_img, random_img_id = cv2.imread("detection_models/27597.jpg"),1630
+random_img, random_img_id = cv2.imread("detection_models/1500.jpg"),1632
 random_img_embedding = DeepFace.represent(
     img_path=np.array(random_img),
     model_name=model_name,
