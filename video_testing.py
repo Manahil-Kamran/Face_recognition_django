@@ -65,6 +65,7 @@ while cap.isOpened():
         
         # Ensure the image has the correct data type
         if face_img.dtype != np.uint8:
+            print("**************")
             face_img = (face_img * 255).astype(np.uint8)
 
         facial_area = face['facial_area']  # Extract the bounding box coordinates
@@ -80,13 +81,17 @@ while cap.isOpened():
         # Find the closest match
         min_dist = float('inf')
         closest_img_id = None
-
+        img_ids=[]
+        check=[]
         for emb, img_id in embeddings:
             dist = distance.euclidean(face_embedding, emb)
+            img_ids.append(img_id)
+            check.append(dist)
             if dist < min_dist:
                 min_dist = dist
                 closest_img_id = img_id
-
+        print(img_ids)
+        print(check)
         # Draw bounding box and label on the frame
         x, y, w, h = facial_area['x'], facial_area['y'], facial_area['w'], facial_area['h']
         draw_label(frame, (x, y - 10), closest_img_id)
