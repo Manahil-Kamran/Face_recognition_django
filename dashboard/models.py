@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 # class AdminLogin(models.Model):
 #     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
@@ -18,11 +19,18 @@ class PersonRegistration(models.Model):
     cnic = models.CharField(max_length=256, null=True, blank=True)
     department_name = models.CharField(max_length=256, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=False)  # Auto-fill with current timestamp
-
+size = 128 # for Openface
+# size = 2048 # for resnet50
+# size = 512 #Facenet512
 class FaceCoding(models.Model):
     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
-    person = models.ForeignKey(PersonRegistration, on_delete=models.CASCADE)  # Foreign key to PersonRegistration
-    face_feature = models.TextField(null=True, blank=True)
+    person = models.ForeignKey(PersonRegistration, on_delete=models.CASCADE,null=True,blank=True)  # Foreign key to PersonRegistration
+    face_feature = ArrayField(
+        models.FloatField(),
+        size=size,  # Assuming your embedding size is 128,
+        null=True,
+        blank=True
+    )
     blob_face_feature = models.BinaryField(null=True, blank=True)  # To store binary data
     img_url = models.ImageField(null=True,blank=True)
     is_current = models.BooleanField(default=False)  # Indicates if this is the current face feature
@@ -31,11 +39,16 @@ class FaceCoding(models.Model):
 
 class PersonAttend(models.Model):
     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
-    person = models.ForeignKey(PersonRegistration, on_delete=models.CASCADE)  # Foreign key to PersonRegistration
-    face_feature = models.TextField(null=True, blank=True)
+    person = models.ForeignKey(PersonRegistration, on_delete=models.CASCADE,null=True,blank=True)  # Foreign key to PersonRegistration
+    face_feature = ArrayField(
+        models.FloatField(),
+        size=size,  # Assuming your embedding size is 128
+        null=True,
+        blank=True
+    )
     blob_face_feature = models.BinaryField(null=True, blank=True)  # To store binary data
     img_url = models.ImageField(null=True,blank=True)
-    camera_id = models.CharField(max_length=256, null=True, blank=True)
+    camera_id = models.CharField(max_length=2048, null=True, blank=True)
     time_sent = models.DateTimeField(auto_now_add=True)  # Auto-fill with current timestamp
     date_created = models.DateTimeField(auto_now_add=True)  # Auto-fill with current timestamp
     T1 = models.IntegerField(default=0)  # Default value of 0

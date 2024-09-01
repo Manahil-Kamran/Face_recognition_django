@@ -1,5 +1,3 @@
-import csv
-import os
 import gc
 import psutil
 import random
@@ -11,11 +9,7 @@ from my_utils.base import Resnet50
 from my_utils.transform import make_transform
 from django.utils.timezone import now
 import warnings
-import psycopg2
 import os
-import pandas as pd  
-from sqlalchemy import create_engine
-from django.conf import settings
 from django.apps import apps
 
 # Setup Django settings
@@ -40,21 +34,21 @@ process = psutil.Process(os.getpid())
 print(f"Before torch.load: {process.memory_info().rss / 1e6:.2f} MB")
 
 # Load the face detection model (ResNet SSD)
-prototxt_file = 'Resnet_SSD_deploy.prototxt'
-caffemodel_file = 'Res10_300x300_SSD_iter_140000.caffemodel'
+prototxt_file = 'detection_models/Resnet_SSD_deploy.prototxt'
+caffemodel_file = 'detection_models/Res10_300x300_SSD_iter_140000.caffemodel'
 net = cv2.dnn.readNetFromCaffe(prototxt_file, caffemodel_file)
 print('ResNetSSD caffe model loaded successfully')
 
 # Load the ResNet50 model for face embedding extraction
 model = Resnet50(embedding_size=512)
-checkpoint = torch.load("/home/devp/Downloads/FR.pth", map_location=torch.device("cpu"))
+checkpoint = torch.load("detection_models/FR.pth", map_location=torch.device("cpu"))
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()  # Set the model to evaluation mode
 model.to(torch.device("cpu"))  # Move the model to CPU
 gc.collect()
 print(f"After torch.load: {process.memory_info().rss / 1e6:.2f} MB")
 # Directory containing the dataset
-dataset_path = '/home/devp/dataset'
+dataset_path = 'detection_models/images'
 # Loop through each employee folder in the dataset
 for employee_id in os.listdir(dataset_path):
     employee_folder = os.path.join(dataset_path, employee_id)

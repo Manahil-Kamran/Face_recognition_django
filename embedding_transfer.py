@@ -16,7 +16,7 @@ django.setup()
 PersonRegistration = apps.get_model('dashboard', 'PersonRegistration')
 FaceCoding = apps.get_model('dashboard', 'FaceCoding')
 warnings.filterwarnings("ignore")
-model_name = "OpenFace" # 1 ,1 ,1 , 1 , 1
+model_name = "Facenet512" # 1 ,1 ,1 , 1 , 1
 
 # Directory containing the dataset
 dataset_path = 'detection_models/images'
@@ -32,7 +32,7 @@ for employee_id in os.listdir(dataset_path):
     
     # Loop over each image for the current employee
     for img_path in image_paths:
-        print(f"Processing image: {img_path} for employee ID: {employee_id}")
+        print(f"Processing image: {img_path} for employee ID: {employee_id}-------{img_path}")
         
         # Load the image using OpenCV
         image = cv2.imread(img_path)
