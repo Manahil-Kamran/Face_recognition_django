@@ -78,9 +78,38 @@ def attend(sid,data):
     c_data.img_url = str(c_id) + ".jpg"
     
 
+@sio.on('posting')
+def posting(sid,data):
+    
+    ## Reading Image
+    # f = request.files['image']
+    # json_data = request.files['json_data']
+    pictures = data['image']
+    json_data = data['json_data']
+    img_data = pickle.loads(pictures, fix_imports=True, encoding="bytes")
+    img_data = cv2.imdecode(img_data, cv2.IMREAD_COLOR)
 
-# def run_socketio_server():
-#     # global model
-#     # model = YOLO('best.pt')
-#     app = socketio.WSGIApp(sio)
-#     wsgi.server(eventlet.listen(('localhost', 8009)), app)
+    print('__________________posting___________')
+    # print(json_data)
+    meta_data = json_data
+    # meta_data = json.load(json_data)
+    c_data = PersonRegistration(
+        full_name=meta_data["full_name"], department_name=meta_data["department_name"])
+
+    ## Get ID of person Data
+    c_id = c_data.id
+    f_data = FaceCoding(
+        person_id=c_id,
+        face_feature=meta_data["face_feature"],
+        blob_face_feature=np.ndarray.dumps(np.array(meta_data["blob_face_feature"])), is_current = 1)
+    
+    p_id = f_data.id
+    #uploading the pic with id name
+    # f.save(os.path.join(
+    #     current_app.config['UPLOAD_FOLDER'], str(p_id) + ".jpg"))
+    cv2.imwrite(os.path.join(mypath2, str(p_id) + ".jpg"), img_data)
+    f_data.img_url = str(p_id) + ".jpg"
+
+    #print(f.filename)mypath
+    # print(meta_data)
+    #return "record inserted", 200
