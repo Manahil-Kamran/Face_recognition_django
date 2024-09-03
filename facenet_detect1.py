@@ -14,7 +14,7 @@ sio = socketio.Client()
 
 # Configuration variables
 base_url = "http://127.0.0.1:8000/"
-model_name = "OpenFace"
+model_name = "Facenet512"
 thresholdfordetection = 0.5
 
 # Function to get the last ID of a person (used for assigning IDs to unknown individuals)
@@ -122,7 +122,7 @@ def draw_label(image, point, label):
 # SocketIO event handling
 @sio.event
 def connect():
-    path = '/home/devp/Videos/Recordings/2.mp4'  # Path to the video file
+    path = '/home/devp/Videos/Recordings/3.mp4'  # Path to the video file
     cap = cv2.VideoCapture(path)
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
     dep_name = "P&D"
