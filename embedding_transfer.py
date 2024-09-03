@@ -19,7 +19,7 @@ warnings.filterwarnings("ignore")
 model_name = "Facenet512" # 1 ,1 ,1 , 1 , 1
 
 # Directory containing the dataset
-dataset_path = 'detection_models/images'
+dataset_path = '/home/devp/dataset'
 # Loop through each employee folder in the dataset
 for employee_id in os.listdir(dataset_path):
     employee_folder = os.path.join(dataset_path, employee_id)

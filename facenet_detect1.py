@@ -122,7 +122,7 @@ def draw_label(image, point, label):
 # SocketIO event handling
 @sio.event
 def connect():
-    path = 'detection_models/deepface1.mp4'  # Path to the video file
+    path = '/home/devp/Videos/Recordings/2.mp4'  # Path to the video file
     cap = cv2.VideoCapture(path)
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
     dep_name = "P&D"
