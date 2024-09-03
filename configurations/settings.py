@@ -133,11 +133,11 @@ mimetypes.add_type("text/css", ".css", True)
 from posixpath import normpath
 import os
 from posixpath import normpath
-STATIC_URL = 'static/'
+STATIC_URL = '/assets/'
 STATICFILES_DIRS=[
-    os.path.join(BASE_DIR,'static'),
+    os.path.join(BASE_DIR,'assets'),
 ]
-# STATIC_ROOT = normpath(os.path.join(BASE_DIR, "staticfile"))
+STATIC_ROOT = normpath(os.path.join(BASE_DIR, 'assets'))
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
