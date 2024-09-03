@@ -14,7 +14,7 @@ sio = socketio.Client()
 
 # Configuration variables
 base_url = "http://127.0.0.1:8000/"
-model_name = "Facenet512"
+model_name = "OpenFace"
 thresholdfordetection = 0.5
 
 # Function to get the last ID of a person (used for assigning IDs to unknown individuals)
@@ -173,10 +173,11 @@ def connect():
                             print(predicted_class,type(predicted_class))
                             print(closest_distances,type(closest_distances))
                             # print(predicted_class, closest_distances)
-
+                            name = ids_for_person_ids.index(predicted_class)
+                            name = person_names[name]
                             # Draw bounding box and label on the frame
                             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                            draw_label(frame, (x, y - 10), predicted_class)
+                            draw_label(frame, (x, y - 10), name)
 
                         except Exception as e:
                             print('Error a:', e)
