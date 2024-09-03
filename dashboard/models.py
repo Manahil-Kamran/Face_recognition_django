@@ -19,8 +19,8 @@ class PersonRegistration(models.Model):
     cnic = models.CharField(max_length=256, null=True, blank=True)
     department_name = models.CharField(max_length=256, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=False)  # Auto-fill with current timestamp
-# size = 128 # for Openface
-size = 2048 # for resnet50
+size = 128 # for Openface
+# size = 2048 # for resnet50
 # size = 512 #Facenet512
 class FaceCoding(models.Model):
     id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
