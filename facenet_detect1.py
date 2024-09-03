@@ -9,12 +9,13 @@ from deepface import DeepFace
 from scipy.spatial import distance
 import socketio
 from datetime import datetime
+
 # Initialize SocketIO client
 sio = socketio.Client()
 
 # Configuration variables
 base_url = "http://127.0.0.1:8000/"
-model_name = "Facenet512"
+model_name = "OpenFace"
 thresholdfordetection = 0.5
 
 # Function to get the last ID of a person (used for assigning IDs to unknown individuals)
@@ -56,43 +57,20 @@ def minkowski_distance(a, b, p):
 def calculate_distance(embedding1, embedding2):
     return np.linalg.norm(np.array(embedding1) - np.array(embedding2))
 
-# def knn_classifier(embedding, registered_embeddings,ids_for_person_ids, threshold=0.5,k=3,p=2):
-#     min_distance = float('inf')
-#     closest_id = None
-#     closest_ids=[]
-#     for user_id, user_embedding in zip(ids_for_person_ids,registered_embeddings):
-#         distance = calculate_distance(embedding, user_embedding)
-#         if distance < min_distance:
-#             closest_ids.append(user_id)
-#             min_distance = distance
-#             closest_id = user_id
-#     # print(min_distance)
-#     # return closest_id if min_distance <= threshold else 'unknown'
-#     # if len(closest_ids):
-#     print("closests ids",Counter(closest_ids))
-#     if min_distance<=threshold:
-#         return  closest_id,np.array([0])
-#     else:
-#         return "unknow",np.array([])
 # KNN classifier for identifying the person
 def knn_classifier(unknown_encodings, known_face_encodings, ids_for_person_ids, k=3, p=2, threshold=0.5):
     distances = np.array([minkowski_distance(unknown_encodings, encoding, p) for encoding in known_face_encodings])
-    filtered_indices = np.where(distances > threshold)
+    filtered_indices = np.where(distances < threshold)
     filtered_distances = distances
-    # for idx,emb in enumerate(known_face_encodings):
-    #     verify = DeepFace.verify(
-    #         img1_path=unknown_encodings,
-    #         img2_path=emb,
-    #         threshold=0.4,
-    #         model_name=model_name,
-    #         detector_backend='yolov8',
-    #         distance_metric = "euclidean",
-    #         enforce_detection = False,
-    #     )
-    #     if verify['verified']:
-    #         print(verify)
-    #         return ids_for_person_ids[idx],np.array([verify['distance']])
-    # return "unknow",np.array([0])
+
+    k_closest = sorted(distances)
+    k_closest=k_closest[1:k]
+    for i in k_closest:
+        id = distances.tolist().index(i)
+        id = ids_for_person_ids[id]
+        print(f"person ID : {id} distance = {i}")
+
+    print("###############################################")
     if filtered_distances.any():
         try:
             closest_indices = np.argpartition(filtered_distances, k)[:k]
@@ -109,7 +87,7 @@ def knn_classifier(unknown_encodings, known_face_encodings, ids_for_person_ids, 
     else:
         print("#"*100)
         return 'unknown', 0
-# # DeepFace.verify
+
 # Function to draw a label on the frame
 def draw_label(image, point, label):
     font = cv2.FONT_HERSHEY_SIMPLEX
@@ -122,7 +100,7 @@ def draw_label(image, point, label):
 # SocketIO event handling
 @sio.event
 def connect():
-    path = '/home/devp/Videos/Recordings/3.mp4'  # Path to the video file
+    path = 'detection_models/deepface1.mp4'  # Path to the video file
     cap = cv2.VideoCapture(path)
     encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 90]
     dep_name = "P&D"
@@ -131,6 +109,10 @@ def connect():
     time_for_wait = 1
     thread_index = 0
 
+    # Variables to calculate FPS
+    frame_count = 0
+    start_time = time.time()
+
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -138,92 +120,72 @@ def connect():
             continue
 
         if frame is not None:
-            # try:
-                thread_index += 1
-                face_embeddings = []
-                face_names = []
+            thread_index += 1
+            face_embeddings = []
+            face_names = []
 
-                # Detect faces in the frame
-                faces = DeepFace.extract_faces(np.array(frame), detector_backend="yolov8", enforce_detection=False)
-                if not faces:
-                    continue  # Skip to the next frame if no face is detected
+            # Detect faces in the frame
+            faces = DeepFace.extract_faces(np.array(frame), detector_backend="yolov8", enforce_detection=False)
+            if not faces:
+                continue  # Skip to the next frame if no face is detected
 
-                for face in faces:
-                    face_img = face['face']
-                    if face_img.dtype != np.uint8:
-                        face_img = (face_img * 255).astype(np.uint8)
-                    bounding_box = face['facial_area']
-                    confidence = face['confidence']
+            for face in faces:
+                face_img = face['face']
+                if face_img.dtype != np.uint8:
+                    face_img = (face_img * 255).astype(np.uint8)
+                bounding_box = face['facial_area']
+                confidence = face['confidence']
 
-                    if confidence > thresholdfordetection:
-                        try:
-                            left = bounding_box['x']
-                            top = bounding_box['y']
-                            right = bounding_box['x'] + bounding_box['w']
-                            bottom = bounding_box['y'] + bounding_box['h']
-                            embeddings = DeepFace.represent(
-                                img_path=face_img,
-                                model_name=model_name,
-                                detector_backend="yolov8",
-                                enforce_detection=False
-                            )[0]["embedding"]
+                if confidence > thresholdfordetection:
+                    try:
+                        left = bounding_box['x']
+                        top = bounding_box['y']
+                        right = bounding_box['x'] + bounding_box['w']
+                        bottom = bounding_box['y'] + bounding_box['h']
+                        embeddings = DeepFace.represent(
+                            img_path=face_img,
+                            model_name=model_name,
+                            detector_backend="yolov8",
+                            enforce_detection=False
+                        )[0]["embedding"]
 
-                            x, y, w, h = bounding_box['x'], bounding_box['y'], bounding_box['w'], bounding_box['h']
-                            predicted_class, closest_distances = knn_classifier(embeddings, known_face_encodings, ids_for_person_ids, k=3, p=2)
-                            print(predicted_class,type(predicted_class))
-                            print(closest_distances,type(closest_distances))
-                            # print(predicted_class, closest_distances)
-                            name = ids_for_person_ids.index(predicted_class)
-                            name = person_names[name]
-                            # Draw bounding box and label on the frame
-                            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                            draw_label(frame, (x, y - 10), name)
+                        x, y, w, h = bounding_box['x'], bounding_box['y'], bounding_box['w'], bounding_box['h']
+                        predicted_class, closest_distances = knn_classifier(embeddings, known_face_encodings, ids_for_person_ids, k=5, p=2)
 
-                        except Exception as e:
-                            print('Error a:', e)
+                        # Draw bounding box and label on the frame
+                        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        draw_label(frame, (x, y - 10), predicted_class)
 
-                        if face_img.any() and len(embeddings) > 0:
-                            label = 'High'
-                            if closest_distances.any():
-                                label = '{0:.2f}%'.format(min(closest_distances) * 100)
+                    except Exception as e:
+                        print('Error:', e)
 
-                            incoming_person_name = knn_id_n.get(predicted_class, 'unknown')
+                    if face_img.any() and len(embeddings) > 0:
+                        label = 'High'
+                        if closest_distances.any():
+                            label = '{0:.2f}%'.format(min(closest_distances) * 100)
 
-                            face_embeddings.append(embeddings)
-                            face_names.append(incoming_person_name)
+                        incoming_person_name = knn_id_n.get(predicted_class, 'unknown')
 
-                            for name, fe in zip(face_names, face_embeddings):
-                                if name == "unknown":
-                                    result, img_encoded = cv2.imencode('.jpg', face_img, encode_param)
-                                    img_data = pickle.dumps(img_encoded, 0)
-                                    name_n = 'unknown--'+ str(23)+"-" + str(thread_index)
-                                    meta_data = {
-                                        'full_name': str(name_n),
-                                        'department_name': dep_name,
-                                        "face_feature": fe,
-                                        "blob_face_feature": fe,
-                                    }
-                                    my_img = {'image': img_data, 'json_data': meta_data}
-                                    sio.emit('posting', my_img)
-                                    name = name_n
+                        face_embeddings.append(embeddings)
+                        face_names.append(incoming_person_name)
 
-                                if name in list(record_person.keys()):
-                                    if time.time() - record_person[name] > (time_for_wait * 60):
-                                        record_person[name] = time.time()
-                                        if name in person_names:
-                                            result, img_encoded = cv2.imencode('.jpg', face_img, encode_param)
-                                            img_data = pickle.dumps(img_encoded, 0)
-                                            now = datetime.now()
-                                            meta_data = {
-                                                'person_id': ids_for_person_ids[person_names.index(name)],
-                                                'camera_id': dep_name,
-                                                "time_sent": str(now),
-                                                "face_feature": fe,
-                                                "blob_face_feature": fe
-                                            }
-                                            my_img1 = {'image': img_data, 'json_data': meta_data}
-                                            sio.emit('attend', my_img1)
-                                else:
+                        for name, fe in zip(face_names, face_embeddings):
+                            if name == "unknown":
+                                result, img_encoded = cv2.imencode('.jpg', face_img, encode_param)
+                                img_data = pickle.dumps(img_encoded, 0)
+                                name_n = 'unknown--'+ str(23)+"-" + str(thread_index)
+                                meta_data = {
+                                    'full_name': str(name_n),
+                                    'department_name': dep_name,
+                                    "face_feature": fe,
+                                    "blob_face_feature": fe,
+                                }
+                                my_img = {'image': img_data, 'json_data': meta_data}
+                                sio.emit('posting', my_img)
+                                name = name_n
+
+                            if name in list(record_person.keys()):
+                                if time.time() - record_person[name] > (time_for_wait * 60):
                                     record_person[name] = time.time()
                                     if name in person_names:
                                         result, img_encoded = cv2.imencode('.jpg', face_img, encode_param)
@@ -238,14 +200,37 @@ def connect():
                                         }
                                         my_img1 = {'image': img_data, 'json_data': meta_data}
                                         sio.emit('attend', my_img1)
+                            else:
+                                record_person[name] = time.time()
+                                if name in person_names:
+                                    result, img_encoded = cv2.imencode('.jpg', face_img, encode_param)
+                                    img_data = pickle.dumps(img_encoded, 0)
+                                    now = datetime.now()
+                                    meta_data = {
+                                        'person_id': ids_for_person_ids[person_names.index(name)],
+                                        'camera_id': dep_name,
+                                        "time_sent": str(now),
+                                        "face_feature": fe,
+                                        "blob_face_feature": fe
+                                    }
+                                    my_img1 = {'image': img_data, 'json_data': meta_data}
+                                    sio.emit('attend', my_img1)
 
-                cv2.imshow('Frame', frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            # except Exception as e:
-            #     print("Error b:", e)
+            # Increment frame count
+            frame_count += 1
+            elapsed_time = time.time() - start_time
+            if elapsed_time > 0:
+                fps = frame_count / elapsed_time
+                # Display FPS on the frame
+                cv2.putText(frame, f"FPS: {fps:.2f}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
+            cv2.imshow('Frame', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+    cap.release()
     cv2.destroyAllWindows()
+
 
 @sio.event
 def disconnect():
