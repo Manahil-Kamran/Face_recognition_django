@@ -16,7 +16,7 @@ django.setup()
 PersonRegistration = apps.get_model('dashboard', 'PersonRegistration')
 FaceCoding = apps.get_model('dashboard', 'FaceCoding')
 warnings.filterwarnings("ignore")
-model_name = "Facenet512" # 1 ,1 ,1 , 1 , 1
+model_name = "OpenFace" # 1 ,1 ,1 , 1 , 1
 
 # Directory containing the dataset
 dataset_path = '/home/devp/dataset'

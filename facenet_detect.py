@@ -211,7 +211,9 @@ def connect():
                         # Draw rectangle around the face
                         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
                         # Optionally, add text to the frame
-                        cv2.putText(frame, predicted_class, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                        name = ids_for_person_ids.index(predicted_class)
+                        name = person_names[name]
+                        cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                         
             
                         
